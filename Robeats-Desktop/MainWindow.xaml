@@ -1,0 +1,43 @@
+﻿<Window x:Class="Robeats_Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Robeats_Desktop"
+        mc:Ignorable="d"
+        Title="Robeats" Height="450" Width="800">
+    <Grid>
+        <TextBox Name="TextBoxUrl" Margin="222,10,329,385">
+            <TextBox.Style>
+                <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    <Style.Resources>
+                        <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                            <VisualBrush.Visual>
+                                <Label Content="Paste your url here" Foreground="LightGray" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Style.Resources>
+                    <Style.Triggers>
+                        <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter Property="Background" Value="White" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <Button Content="Download" HorizontalAlignment="Left" Margin="468,10,0,0" VerticalAlignment="Top" Width="75" Height="24" Click="Button_Click"/>
+        <Image Name="ImageThumbnail" HorizontalAlignment="Left" Width="144" Height="80" Margin="222,58,0,0" VerticalAlignment="Top"/>
+        <StackPanel Width="300" Margin="371,58,121,253">
+            <Label Name="LabelTitle" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Label Name="LabelAuthor" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Label Name="LabelDuration" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <ProgressBar Name="ProgressBarStatus" Height="20"></ProgressBar>
+        </StackPanel>
+    </Grid>
+</Window>
