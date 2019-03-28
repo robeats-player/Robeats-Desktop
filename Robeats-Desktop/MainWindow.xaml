@@ -7,45 +7,119 @@
         mc:Ignorable="d"
         Title="Robeats" Height="450" Width="800"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-         TextElement.FontWeight="Regular"
-         TextElement.FontSize="13"
-         TextOptions.TextFormattingMode="Ideal"
-         TextOptions.TextRenderingMode="Auto"
-         Background="{DynamicResource MaterialDesignPaper}"
-         FontFamily="{DynamicResource MaterialDesignFont}">
+        TextElement.Foreground="{StaticResource MaterialDesignPaper}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}" WindowStartupLocation="Manual">
     <Grid>
-        <TextBox Name="TextBoxUrl" Margin="222,10,328.6,385">
-            <TextBox.Style>
-                <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                    <Style.Resources>
-                        <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
-                            <VisualBrush.Visual>
-                                <Label Content="Paste your url here" Foreground="LightGray" />
-                            </VisualBrush.Visual>
-                        </VisualBrush>
-                    </Style.Resources>
-                    <Style.Triggers>
-                        <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
-                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
-                        </Trigger>
-                        <Trigger Property="Text" Value="{x:Null}">
-                            <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter Property="Background" Value="White" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBox.Style>
-        </TextBox>
-        <Button Style="{StaticResource DownloadButton}" Content="Download" HorizontalAlignment="Left" Margin="468,10,0,0" VerticalAlignment="Top" Width="66" Height="25" Click="Button_Click"/>
-        <Image Name="ImageThumbnail" HorizontalAlignment="Left" Width="144" Height="80" Margin="222,58,0,0" VerticalAlignment="Top"/>
-        <StackPanel Width="300" Margin="371,58,121,253">
-            <Label Name="LabelTitle" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <Label Name="LabelAuthor" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <Label Name="LabelDuration" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <ProgressBar Name="ProgressBarStatus" Height="20"></ProgressBar>
+        <StackPanel>
+            <!--Sidebar-->
+            <TabControl TabStripPlacement="Left" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <!--Local music-->
+                <TabItem>
+                    <TabItem.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="Music"/>
+                            <TextBlock Grid.Column="1">Local Music</TextBlock>
+                        </Grid>
+                    </TabItem.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar Background="Transparent" Name="ProgressBarStatus" Height="3" IsIndeterminate="False"/>
+                        <StackPanel Grid.Row="1">
+                            <Label Style="{StaticResource Title}" Content="Download" />
+                            <Grid Margin="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*" MinWidth="60"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox VerticalContentAlignment="Center" Grid.Column="0" x:Name="TextBoxUrl">
+                                    <TextBox.Style>
+                                        <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                                            <Style.Resources>
+                                                <VisualBrush  x:Key="CueBannerBrush"  AlignmentX="Left" AlignmentY="Center"
+                                                     Stretch="None">
+                                                    <VisualBrush.Visual>
+                                                        <Label Content="Youtube url" Foreground="DarkGray" />
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Style.Resources>
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                                    <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="Text" Value="{x:Null}">
+                                                    <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                                    <Setter Property="Background" Value="White" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <Button Margin="5,0" Grid.Column="1" HorizontalAlignment="Left"
+                                VerticalAlignment="Top" Height="28"
+                                Click="Button_Click">
+                                    <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
+                                </Button>
+                            </Grid>
+                            <Grid Height="135">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="250"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image x:Name="ImageThumbnail" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                                <StackPanel Grid.Column="1">
+                                    <Label x:Name="LabelTitle" Content="Label" HorizontalAlignment="Left"
+                                           VerticalAlignment="Top" />
+                                    <Label x:Name="LabelAuthor" Content="Label" HorizontalAlignment="Left"
+                                           VerticalAlignment="Top" />
+                                    <Label x:Name="LabelDuration" Content="Label" HorizontalAlignment="Left"
+                                           VerticalAlignment="Top" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="PlaylistPlay"/>
+                            <TextBlock Grid.Column="1">Playlists</TextBlock>
+                        </Grid>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="AccessPointNetwork"/>
+                            <TextBlock Grid.Column="1">Network Devices</TextBlock>
+                        </Grid>
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
         </StackPanel>
     </Grid>
 </Window>
