@@ -5,7 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Robeats_Desktop"
         mc:Ignorable="d"
-        Title="Robeats" Height="450" Width="800">
+        Title="Robeats" Height="450" Width="800"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         TextElement.FontWeight="Regular"
+         TextElement.FontSize="13"
+         TextOptions.TextFormattingMode="Ideal"
+         TextOptions.TextRenderingMode="Auto"
+         Background="{DynamicResource MaterialDesignPaper}"
+         FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
         <TextBox Name="TextBoxUrl" Margin="222,10,328.6,385">
             <TextBox.Style>
@@ -31,7 +39,7 @@
                 </Style>
             </TextBox.Style>
         </TextBox>
-        <Button Content="Download" HorizontalAlignment="Left" Margin="468,10,0,0" VerticalAlignment="Top" Width="106" Height="25" Click="Button_Click"/>
+        <Button Style="{StaticResource DownloadButton}" Content="Download" HorizontalAlignment="Left" Margin="468,10,0,0" VerticalAlignment="Top" Width="66" Height="25" Click="Button_Click"/>
         <Image Name="ImageThumbnail" HorizontalAlignment="Left" Width="144" Height="80" Margin="222,58,0,0" VerticalAlignment="Top"/>
         <StackPanel Width="300" Margin="371,58,121,253">
             <Label Name="LabelTitle" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
