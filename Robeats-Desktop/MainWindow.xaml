@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Robeats" Height="450" Width="800">
     <Grid>
-        <TextBox Name="TextBoxUrl" Margin="222,10,329,385">
+        <TextBox Name="TextBoxUrl" Margin="222,10,328.6,385">
             <TextBox.Style>
                 <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                     <Style.Resources>
@@ -31,7 +31,7 @@
                 </Style>
             </TextBox.Style>
         </TextBox>
-        <Button Content="Download" HorizontalAlignment="Left" Margin="468,10,0,0" VerticalAlignment="Top" Width="75" Height="24" Click="Button_Click"/>
+        <Button Content="Download" HorizontalAlignment="Left" Margin="468,10,0,0" VerticalAlignment="Top" Width="106" Height="25" Click="Button_Click"/>
         <Image Name="ImageThumbnail" HorizontalAlignment="Left" Width="144" Height="80" Margin="222,58,0,0" VerticalAlignment="Top"/>
         <StackPanel Width="300" Margin="371,58,121,253">
             <Label Name="LabelTitle" Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top"/>
