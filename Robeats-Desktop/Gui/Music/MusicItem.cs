@@ -17,8 +17,6 @@ namespace Robeats_Desktop.Gui.Music
         public string Artist { get; set; }
         public string Duration { get; set; }
 
-        public int Columns { get; set; } = 5;
-
 
         public MusicItem(string title, string artist, string duration)
         {
@@ -34,10 +32,11 @@ namespace Robeats_Desktop.Gui.Music
         public void Add(StackPanel stackPanel)
         {
             var grid = new Grid();
-            for (var i = 0; i < Columns; i++)
-            {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            }
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             var title = new Label() {Content = Title};
             title.SetValue(Grid.ColumnProperty, 1);
@@ -59,6 +58,10 @@ namespace Robeats_Desktop.Gui.Music
             stackPanel.Children.Add(grid);
         }
 
+        public void Clear(StackPanel stackPanel)
+        {
+            stackPanel.Children.Clear();
+        }
         private void GridOnMouseLeave(object sender, MouseEventArgs e)
         {
             var element = ((Grid)e.Source).Children.OfType<PackIcon>().FirstOrDefault();

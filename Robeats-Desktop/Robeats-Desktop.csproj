@@ -71,6 +71,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Gui\Music\MusicItem.cs" />
+    <Compile Include="Util\Path.cs" />
     <Compile Include="Util\Thumbnail.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
