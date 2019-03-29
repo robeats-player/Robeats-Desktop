@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AngleSharp;
+using Robeats_Desktop.Gui.Music;
 using Robeats_Desktop.Util;
 using YoutubeExplode;
 using YoutubeExplode.Models.MediaStreams;
@@ -61,6 +62,8 @@ namespace Robeats_Desktop
             LabelDuration.Content = video.Duration;
             ImageThumbnail.Source = Thumbnail.Download(video.Thumbnails.MediumResUrl);
             IsProgressIndeterminate = false;
+
+            GridInfo.Visibility = Visibility.Visible;
         }
 
         private async void DownloadVideo()
@@ -71,6 +74,15 @@ namespace Robeats_Desktop
             var streamInfo = streamInfoSet.Muxed.WithHighestVideoQuality();
             var ext = streamInfo.Container.GetFileExtension();
             await client.DownloadMediaStreamAsync(streamInfo, $"downloaded_video.{ext}");
+        }
+
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TabItemMusic.IsSelected)
+            {
+                var musicItem = new MusicItem("Test", "Test", "4:32");
+                musicItem.Add(StackPanelSongs);
+            }
         }
     }
 }

@@ -19,15 +19,20 @@
                                 <SolidColorBrush Color="{DynamicResource PrimaryColor}" />
                             </TabPanel.Background>
                         </TabPanel>
-                        <Grid Grid.Column="1">
+                        <Grid Grid.Column="1" Background="{DynamicResource PrimaryTextBrush}">
                             <ContentPresenter x:Name="PART_SelectedContentHost"
                                               Margin="4"
-                                              ContentSource="SelectedContent" />
+                                              ContentSource="SelectedContent"/>
                         </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryInverseTextBrush}"></Setter>
+            </Style>
+        </Style.Resources>
     </Style>
     <Style TargetType="TabItem">
         <Setter Property="HorizontalAlignment" Value="Left" />
