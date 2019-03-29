@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using AngleSharp;
+using FFmpeg.NET;
+using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Gui.Music;
 using Robeats_Desktop.Util;
 using YoutubeExplode;
@@ -33,7 +36,9 @@ namespace Robeats_Desktop
         public string Url { get; set; }
         public string Id { get; set; }
         public YoutubeClient Client { get; set; }
-        public readonly string OUTPUT_DIR = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+        public static readonly string OUTPUT_DIR = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+
+        private Converter _converter;
 
         private double _progress;
 
@@ -62,6 +67,7 @@ namespace Robeats_Desktop
         public MainWindow()
         {
             InitializeComponent();
+            _converter = new Converter(new Engine(@"ffmpeg.exe"));
         }
 
 
@@ -109,8 +115,17 @@ namespace Robeats_Desktop
             // Set up progress handler
             var progressHandler = new Progress<double>(p => Progress = p);
 
-            // Download to file
-            await Client.DownloadMediaStreamAsync(streamInfo, $"{Path.Combine(OUTPUT_DIR,UtilPath.Sanitize(video.Title))}.mp3", progressHandler);
+            // Download to memory to then convert to audio only formats
+            var memoryStream = new MemoryStream();
+            await Client.DownloadMediaStreamAsync(streamInfo,
+                memoryStream, progressHandler);
+            var tempFileName = Path.GetTempFileName();
+            var fileStream = File.Create(tempFileName, memoryStream.Capacity, FileOptions.DeleteOnClose);
+            memoryStream.WriteTo(fileStream);
+            //var mediaFile = await _converter.Convert(new MediaFile(tempFileName), OUTPUT_DIR, UtilPath.Sanitize(video.Title));
+            MediaFile file = await _converter.Engine.ConvertAsync(new MediaFile(tempFileName),
+                 new MediaFile(Path.Combine(OUTPUT_DIR, $"{UtilPath.Sanitize(video.Title)}.mp3")));
+            Debug.WriteLine(file.FileInfo);
         }
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -119,14 +134,22 @@ namespace Robeats_Desktop
             {
                 var musicItem = new MusicItem();
                 musicItem.Clear(StackPanelSongs);
-                var files = Directory.GetFiles(OUTPUT_DIR)
-                    .Select(Path.GetFileNameWithoutExtension).ToArray();
+                var files = Directory.GetFiles(OUTPUT_DIR, "*.mp3")
+                    .Select(Path.GetFileName).ToArray();
                 foreach (var file in files)
                 {
-                    musicItem = new MusicItem(file, "Test", "4:32");
+                    var tFile = TagLib.File.Create(Path.Combine(OUTPUT_DIR, file));
+                    musicItem = new MusicItem(Path.GetFileNameWithoutExtension(file), tFile.Tag.FirstAlbumArtist,
+                        $"{(int) tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds}");
                     musicItem.Add(StackPanelSongs);
                 }
             }
+        }
+
+        private void TextBoxUrl_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            TextBoxUrl.SelectionStart = 0;
+            TextBoxUrl.SelectionLength = TextBoxUrl.Text.Length;
         }
     }
 }

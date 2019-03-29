@@ -46,7 +46,7 @@
                                 <ColumnDefinition Width="9*" />
                                 <ColumnDefinition Width="1*" MinWidth="60" />
                             </Grid.ColumnDefinitions>
-                            <TextBox VerticalContentAlignment="Center" Grid.Column="0" x:Name="TextBoxUrl">
+                            <TextBox MouseDoubleClick="TextBoxUrl_OnMouseDoubleClick" VerticalContentAlignment="Center" Grid.Column="0" x:Name="TextBoxUrl">
                                 <TextBox.Style>
                                     <Style xmlns:sys="clr-namespace:System;assembly=mscorlib"
                                            TargetType="{x:Type TextBox}">
