@@ -145,7 +145,7 @@ namespace Robeats_Desktop
                 {
                     var tFile = TagLib.File.Create(Path.Combine(OUTPUT_DIR, file));
                     musicItem = new MusicItem(Path.GetFileNameWithoutExtension(file), tFile.Tag.FirstAlbumArtist,
-                        $"{(int) tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds}");
+                        $"{tFile.Properties.Duration.Minutes}:{tFile.Properties.Duration.Seconds:D2}");
                     musicItem.Add(StackPanelSongs);
                 }
             }
