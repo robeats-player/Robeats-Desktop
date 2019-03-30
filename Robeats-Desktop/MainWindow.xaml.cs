@@ -33,7 +33,7 @@ namespace Robeats_Desktop
 {
     public partial class MainWindow : Window
     {
-        public string Url { get; set; }
+        public SongMetaData SongMeta { get; set; }
         public string Id { get; set; }
         public YoutubeClient Client { get; set; }
         public static readonly string OUTPUT_DIR = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
@@ -68,6 +68,7 @@ namespace Robeats_Desktop
         {
             InitializeComponent();
             _converter = new Converter(new Engine(@"ffmpeg.exe"));
+            SongMeta = new SongMetaData();
         }
 
 
@@ -107,6 +108,8 @@ namespace Robeats_Desktop
 
         private async void DownloadVideo(Video video)
         {
+            var title = UtilPath.Sanitize(video.Title);
+
             //Get all information from the youtube video
             var streamInfoSet = await new YoutubeClient().GetVideoMediaStreamInfosAsync(Id);
 
@@ -125,11 +128,16 @@ namespace Robeats_Desktop
 
             //Do the conversion from WebM (or whatever format YouTube might use in the future)
             var file = await _converter.Engine.ConvertAsync(new MediaFile(tempFileName),
-                new MediaFile(Path.Combine(OUTPUT_DIR, $"{UtilPath.Sanitize(video.Title)}.mp3")));
+                new MediaFile(Path.Combine(OUTPUT_DIR, $"{title}.mp3")));
 
             //Delete the temporary file
             File.Delete(tempFileName);
 
+            //Write meta data to song
+            SongMeta.Path = file.FileInfo.FullName;
+            SongMeta.AddTitle(title);
+            SongMeta.AddArtists(new []{video.Author});
+            SongMeta.TagFile.Save();
             Debug.WriteLine(file.FileInfo);
         }
 
@@ -144,7 +152,8 @@ namespace Robeats_Desktop
                 foreach (var file in files)
                 {
                     var tFile = TagLib.File.Create(Path.Combine(OUTPUT_DIR, file));
-                    musicItem = new MusicItem(Path.GetFileNameWithoutExtension(file), tFile.Tag.FirstAlbumArtist,
+                    var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
+                    musicItem = new MusicItem(title, tFile.Tag.FirstPerformer,
                         $"{tFile.Properties.Duration.Minutes}:{tFile.Properties.Duration.Seconds:D2}");
                     musicItem.Add(StackPanelSongs);
                 }

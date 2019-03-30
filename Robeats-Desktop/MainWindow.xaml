@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Robeats_Desktop"
         mc:Ignorable="d"
-        Title="Robeats" Height="450" Width="800"
+        Title="Robeats" Height="494" Width="850"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{StaticResource MaterialDesignPaper}"
         TextElement.FontWeight="Regular"
@@ -13,156 +13,180 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{DynamicResource MaterialDesignFont}" WindowStartupLocation="Manual">
-    <DockPanel>
-        <!--Sidebar-->
-        <TabControl SelectionChanged="Selector_OnSelectionChanged" TabStripPlacement="Left"
-                    HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch">
-            <!--Download-->
-            <TabItem Name="TabItemDownload">
-                <TabItem.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Kind="FolderDownload" />
-                        <TextBlock Grid.Column="1">Download</TextBlock>
-                    </Grid>
-                </TabItem.Header>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="3" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <ProgressBar Background="Transparent" Name="ProgressBarStatus" Height="3" IsIndeterminate="False" />
-                    <StackPanel Grid.Row="1">
-                        <Label Style="{StaticResource Title}" Content="Download" />
-                        <Grid Margin="4">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem FontSize="14" Header="_Settings" Height="30">
+                    <MenuItem Header="YEET" />
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <DockPanel Grid.Row="1">
+            <!--Sidebar-->
+            <TabControl SelectionChanged="Selector_OnSelectionChanged" TabStripPlacement="Left"
+                        HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch">
+                <!--Download-->
+                <TabItem Name="TabItemDownload">
+                    <TabItem.Header>
+                        <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" />
-                                <ColumnDefinition Width="1*" MinWidth="60" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox MouseDoubleClick="TextBoxUrl_OnMouseDoubleClick" VerticalContentAlignment="Center" Grid.Column="0" x:Name="TextBoxUrl">
-                                <TextBox.Style>
-                                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                                           TargetType="{x:Type TextBox}">
-                                        <Style.Resources>
-                                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center"
-                                                         Stretch="None">
-                                                <VisualBrush.Visual>
-                                                    <Label Content="Youtube url" Foreground="DarkGray" />
-                                                </VisualBrush.Visual>
-                                            </VisualBrush>
-                                        </Style.Resources>
-                                        <Style.Triggers>
-                                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
-                                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
-                                            </Trigger>
-                                            <Trigger Property="Text" Value="{x:Null}">
-                                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
-                                            </Trigger>
-                                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                                <Setter Property="Background" Value="White" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBox.Style>
-                            </TextBox>
-                            <Button Margin="5,0" Grid.Column="1" HorizontalAlignment="Left"
-                                    VerticalAlignment="Top" Height="28"
-                                    Click="Button_Click">
-                                <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
-                            </Button>
-                        </Grid>
-                        <Grid Height="135">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="250" />
+                                <ColumnDefinition Width="20" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-                            <Image x:Name="ImageThumbnail" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                            <Grid Grid.Column="1" Name="GridInfo" Visibility="Hidden">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70" />
-                                    <ColumnDefinition Width="3*" MaxWidth="250" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <Label>Title:</Label>
-                                    <Label>Author:</Label>
-                                    <Label>Duration:</Label>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1">
-                                    <Label x:Name="LabelTitle" HorizontalAlignment="Left"
-                                           VerticalAlignment="Top" />
-                                    <Label x:Name="LabelAuthor" HorizontalAlignment="Left"
-                                           VerticalAlignment="Top" />
-                                    <Label x:Name="LabelDuration" HorizontalAlignment="Left"
-                                           VerticalAlignment="Top" />
-                                    <ProgressBar Background="Transparent" Name="ProgressBarDownload" />
-                                </StackPanel>
-                            </Grid>
-
+                            <materialDesign:PackIcon Kind="FolderDownload" />
+                            <TextBlock Grid.Column="1">Download</TextBlock>
                         </Grid>
-                    </StackPanel>
-                </Grid>
+                    </TabItem.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar Background="Transparent" Name="ProgressBarStatus" Height="3"
+                                     IsIndeterminate="False" />
+                        <StackPanel Grid.Row="1">
+                            <Label Style="{StaticResource Title}" Content="Download" />
+                            <Grid Margin="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" />
+                                    <ColumnDefinition Width="1*" MinWidth="60" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox MouseDoubleClick="TextBoxUrl_OnMouseDoubleClick"
+                                         VerticalContentAlignment="Center" Grid.Column="0" x:Name="TextBoxUrl">
+                                    <TextBox.Style>
+                                        <Style xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                                               TargetType="{x:Type TextBox}">
+                                            <Style.Resources>
+                                                <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left"
+                                                             AlignmentY="Center"
+                                                             Stretch="None">
+                                                    <VisualBrush.Visual>
+                                                        <Label Content="Youtube url" Foreground="DarkGray" />
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Style.Resources>
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                                    <Setter Property="Background"
+                                                            Value="{StaticResource CueBannerBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="Text" Value="{x:Null}">
+                                                    <Setter Property="Background"
+                                                            Value="{StaticResource CueBannerBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                                    <Setter Property="Background" Value="White" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <Button Margin="5,0" Grid.Column="1" HorizontalAlignment="Left"
+                                        VerticalAlignment="Top" Height="28"
+                                        Click="Button_Click">
+                                    <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
+                                </Button>
+                            </Grid>
+                            <Grid Height="135">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="250" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Image x:Name="ImageThumbnail" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                                <Grid Grid.Column="1" Name="GridInfo" Visibility="Hidden">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="3*" MaxWidth="250" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <Label>Title:</Label>
+                                        <Label>Author:</Label>
+                                        <Label>Duration:</Label>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <Label x:Name="LabelTitle" HorizontalAlignment="Left"
+                                               VerticalAlignment="Top" />
+                                        <Label x:Name="LabelAuthor" HorizontalAlignment="Left"
+                                               VerticalAlignment="Top" />
+                                        <Label x:Name="LabelDuration" HorizontalAlignment="Left"
+                                               VerticalAlignment="Top" />
+                                        <ProgressBar Background="Transparent" Name="ProgressBarDownload" />
+                                    </StackPanel>
+                                </Grid>
 
-            </TabItem>
-            <!--Local Music-->
-            <TabItem Name="TabItemMusic">
-                <TabItem.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Kind="Music" />
-                        <TextBlock Grid.Column="1">Local Music</TextBlock>
+                            </Grid>
+                        </StackPanel>
                     </Grid>
-                </TabItem.Header>
-                <StackPanel Name="StackPanelSongs">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="1">Name</Label>
-                        <Label Grid.Column="2">Artist</Label>
-                        <Label Grid.Column="3">Duration</Label>
-                    </Grid>
-                </StackPanel>
 
-            </TabItem>
-            <!--Playlists-->
-            <TabItem Name="TabItemPlaylist">
-                <TabItem.Header>
+                </TabItem>
+                <!--Local Music-->
+                <TabItem Name="TabItemMusic">
+                    <TabItem.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="Music" />
+                            <TextBlock Grid.Column="1">Local Music</TextBlock>
+                        </Grid>
+                    </TabItem.Header>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Kind="PlaylistPlay" />
-                        <TextBlock Grid.Column="1">Playlists</TextBlock>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <Grid Name="GridSongHeader">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="1">Name</Label>
+                                <Label Grid.Column="2">Artist</Label>
+                                <Label Grid.Column="3">Duration</Label>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Name="StackPanelSongs" />
                     </Grid>
-                </TabItem.Header>
-            </TabItem>
-            <!--Network Devices-->
-            <TabItem Name="TabItemNetwork">
-                <TabItem.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Kind="AccessPointNetwork" />
-                        <TextBlock Grid.Column="1">Network Devices</TextBlock>
-                    </Grid>
-                </TabItem.Header>
-            </TabItem>
-        </TabControl>
-    </DockPanel>
+                </TabItem>
+                <!--Playlists-->
+                <TabItem Name="TabItemPlaylist">
+                    <TabItem.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="PlaylistPlay" />
+                            <TextBlock Grid.Column="1">Playlists</TextBlock>
+                        </Grid>
+                    </TabItem.Header>
+                </TabItem>
+                <!--Network Devices-->
+                <TabItem Name="TabItemNetwork">
+                    <TabItem.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="AccessPointNetwork" />
+                            <TextBlock Grid.Column="1">Network Devices</TextBlock>
+                        </Grid>
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Grid>
 </Window>
