@@ -93,6 +93,7 @@ namespace Robeats_Desktop
                     LabelDuration.Content = video.Result.Duration;
                     ImageThumbnail.Source = Thumbnail.Download(video.Result.Thumbnails.MediumResUrl);
                 });
+
                 DownloadVideo(video.Result);
             });
         }
@@ -106,25 +107,29 @@ namespace Robeats_Desktop
 
         private async void DownloadVideo(Video video)
         {
+            //Get all information from the youtube video
             var streamInfoSet = await new YoutubeClient().GetVideoMediaStreamInfosAsync(Id);
 
-            var streamInfo = streamInfoSet.Muxed.WithHighestVideoQuality();
-            var ext = streamInfo.Container.GetFileExtension();
-
+            //Pick the audio file with the best quality
+            var streamInfo = streamInfoSet.Audio.WithHighestBitrate();
 
             // Set up progress handler
             var progressHandler = new Progress<double>(p => Progress = p);
 
-            // Download to memory to then convert to audio only formats
-            var memoryStream = new MemoryStream();
-            await Client.DownloadMediaStreamAsync(streamInfo,
-                memoryStream, progressHandler);
+            // Download to a temporary file
             var tempFileName = Path.GetTempFileName();
-            var fileStream = File.Create(tempFileName, memoryStream.Capacity, FileOptions.DeleteOnClose);
-            memoryStream.WriteTo(fileStream);
-            //var mediaFile = await _converter.Convert(new MediaFile(tempFileName), OUTPUT_DIR, UtilPath.Sanitize(video.Title));
-            MediaFile file = await _converter.Engine.ConvertAsync(new MediaFile(tempFileName),
-                 new MediaFile(Path.Combine(OUTPUT_DIR, $"{UtilPath.Sanitize(video.Title)}.mp3")));
+            using (var fileStream = File.Create(tempFileName, 1024))
+            {
+                await Client.DownloadMediaStreamAsync(streamInfo, fileStream, progressHandler);
+            }   
+
+            //Do the conversion from WebM (or whatever format YouTube might use in the future)
+            var file = await _converter.Engine.ConvertAsync(new MediaFile(tempFileName),
+                new MediaFile(Path.Combine(OUTPUT_DIR, $"{UtilPath.Sanitize(video.Title)}.mp3")));
+
+            //Delete the temporary file
+            File.Delete(tempFileName);
+
             Debug.WriteLine(file.FileInfo);
         }
 
