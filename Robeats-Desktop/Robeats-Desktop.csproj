@@ -79,8 +79,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Artists.cs" />
     <Compile Include="Ffmpeg\Converter.cs" />
     <Compile Include="Gui\Music\MusicItem.cs" />
+    <Compile Include="Scrape\SongInfo.cs" />
+    <Compile Include="Util\Filter.cs" />
     <Compile Include="Util\Path.cs" />
     <Compile Include="Util\SongMetaData.cs" />
     <Compile Include="Util\Thumbnail.cs" />
@@ -97,6 +100,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ResourceDictionaries\Buttons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\ListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDictionaries\ScrollView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

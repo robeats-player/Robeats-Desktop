@@ -139,26 +139,16 @@
                             <TextBlock Grid.Column="1">Local Music</TextBlock>
                         </Grid>
                     </TabItem.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
-                        <StackPanel>
-                            <Grid Name="GridSongHeader">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="300" />
-                                    <ColumnDefinition Width="200" />
-                                    <ColumnDefinition Width="1*" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="1">Name</Label>
-                                <Label Grid.Column="2">Artist</Label>
-                                <Label Grid.Column="3">Duration</Label>
-                            </Grid>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Name="StackPanelSongs" />
-                    </Grid>
+                    <ListView Name="ListViewSongs">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="40"/>
+                                <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Title}" />
+                                <GridViewColumn Header="Artist" Width="200" DisplayMemberBinding="{Binding Artist}"/>
+                                <GridViewColumn Header="Duration" Width="80"  DisplayMemberBinding="{Binding Duration}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </TabItem>
                 <!--Playlists-->
                 <TabItem Name="TabItemPlaylist">
