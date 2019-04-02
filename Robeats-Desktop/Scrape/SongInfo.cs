@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AngleSharp.Parser.Html;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,38 +14,56 @@ namespace Robeats_Desktop.Scrape
     class SongInfo
     {
         public Video Video { get; set; }
+        public string Url { get; set; }
 
-        public string SongName { get; set; }
-        public string Artist { get; set; }
-        public string Album { get; set; }
-        public string Author { get; set; }
+        public SongInfo()
+        {
+
+        }
+
+        public SongInfo(string url) {
+            Url = url;
+        }
 
         //TODO fix this mess
-        public void Get(string url)
+        private Dictionary<string, string> Get()
         {
-            Regex regex = new Regex("(<ul class=\"content watch-info-tag-list\">\\s*<li>\\s*(.+)s*</li>\\s*</ul>)");
             WebClient webClient = new WebClient();
-            string s = webClient.DownloadString(url);
-            var matches = regex.Matches(s);
+            string s = webClient.DownloadString(Url);
+            Debug.WriteLine(s);            
 
-            List<string> info = new List<string>();
-            foreach (Match match in matches)
+            var parser = new HtmlParser();
+
+            var document = parser.Parse(s);
+
+            var info2 = document.QuerySelector("#watch-description-content");
+            var headers = info2.QuerySelectorAll("h4");
+            var items = info2.QuerySelectorAll(".watch-info-tag-list");
+            return headers.Zip(items, (k, v) => new { Key = k.TextContent.Trim(), Value = v.TextContent.Trim() })
+                .ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        public void SetTags(TagLib.File libFile)
+        {
+            var dictionary = Get();
+            foreach (var item in dictionary)
             {
-                
-                var result = match.Groups[2].Value;
-                if (result.StartsWith("<a"))
+                switch (item.Key.ToLower())
                 {
-                    result = new Regex("<a.*>(.*)</a>").Match(result).Groups[1].Value;
+                    case "song":
+                        libFile.Tag.Title = item.Value;
+                        break;
+                    case "album":
+                        libFile.Tag.Album = item.Value;
+                        break;
+                    case "artist":
+                        libFile.Tag.Performers = new[] { item.Value };
+                        break;
+                    default:
+                        break;
                 }
-                Debug.WriteLine(result);
-                info.Add(result);
-                
             }
-
-            SongName = info[1];
-            Artist = info[2];
-            Album = info[3];
-            Author = info[4];
+            libFile.Save();
         }
     }
 }

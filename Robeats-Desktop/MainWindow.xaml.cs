@@ -97,7 +97,7 @@ namespace Robeats_Desktop
             Id = YoutubeClient.ParseVideoId(url);
             Client = new YoutubeClient();
             var songInfo = new SongInfo();
-            songInfo.Get(url);
+            songInfo.Url = url;
             songInfo.Video = await Client.GetVideoAsync(Id);
             return songInfo;
         }
@@ -127,16 +127,13 @@ namespace Robeats_Desktop
             var file = await _converter.Engine.ConvertAsync(new MediaFile(tempFileName),
                 new MediaFile(Path.Combine(OUTPUT_DIR, $"{title}.mp3")));
 
+
             //Delete the temporary file
             File.Delete(tempFileName);
 
             //Write meta data to song
             SongMeta.Path = file.FileInfo.FullName;
-            SongMeta.AddTitle(songInfo.SongName);
-            SongMeta.AddArtists(new[] {songInfo.Artist});
-            SongMeta.TagFile.Tag.Album = songInfo.Album;
-            SongMeta.TagFile.Save();
-            Debug.WriteLine(file.FileInfo);
+            songInfo.SetTags(SongMeta.TagFile);
         }
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
