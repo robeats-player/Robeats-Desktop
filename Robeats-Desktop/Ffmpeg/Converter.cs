@@ -17,11 +17,25 @@ namespace Robeats_Desktop.Ffmpeg
             Engine = engine;
         }
 
-        public Task<MediaFile> Convert(MediaFile inputFile, string outputDir)
+        /// <summary>
+        /// Convert <see cref="MediaFile"/> to an MP3 file asynchronous
+        /// </summary>
+        /// <param name="inputFile">The input file of type <see cref="MediaFile"/></param>
+        /// <param name="outputDir">The output directory where the MP3 will be stored</param>
+        /// <returns><see cref="Task{TResult}"/></returns>
+        public Task<MediaFile> ConvertAsync(MediaFile inputFile, string outputDir)
         {
-            return Convert(inputFile, outputDir, inputFile.FileInfo.Name);
+            return ConvertAsync(inputFile, outputDir, inputFile.FileInfo.Name);
         }
-        public Task<MediaFile> Convert(MediaFile inputFile, string outputDir, string name)
+
+        /// <summary>
+        /// Convert <see cref="MediaFile"/> to an MP3 file asynchronous
+        /// </summary>
+        /// <param name="inputFile">The input file of type <see cref="MediaFile"/></param>
+        /// <param name="outputDir">The output directory where the MP3 will be stored</param>
+        /// <param name="name">The name of the file</param>
+        /// <returns><see cref="Task{TResult}"/></returns>
+        public Task<MediaFile> ConvertAsync(MediaFile inputFile, string outputDir, string name)
         {
             var outputFile = new MediaFile(Path.Combine(outputDir, $"{name}.mp3"));
             return Engine.ConvertAsync(inputFile, outputFile);

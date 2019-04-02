@@ -55,6 +55,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -79,13 +81,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Artists.cs" />
     <Compile Include="Ffmpeg\Converter.cs" />
     <Compile Include="Gui\Music\MusicItem.cs" />
-    <Compile Include="Scrape\SongInfo.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Scrape\VideoInfo.cs" />
+    <Compile Include="UserControls\DownloadControl.xaml.cs">
+      <DependentUpon>DownloadControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\Filter.cs" />
     <Compile Include="Util\Path.cs" />
-    <Compile Include="Util\SongMetaData.cs" />
+    <Compile Include="Util\TagWrapper.cs" />
     <Compile Include="Util\Thumbnail.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -112,6 +117,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResourceDictionaries\TabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\DownloadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

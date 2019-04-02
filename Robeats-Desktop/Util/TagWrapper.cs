@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Robeats_Desktop.Util
 {
-    public class SongMetaData
+    public class TagWrapper
     {
         private string _path;
 
@@ -16,30 +16,20 @@ namespace Robeats_Desktop.Util
             set
             {
                 _path = value;
-                TagFile = TagLib.File.Create(Path);
+                TagFile = TagLib.File.Create(value);
             }
         }
 
 
         public TagLib.File TagFile { get; set; }
 
-        public SongMetaData()
+        public TagWrapper()
         {
         }
 
-        public SongMetaData(string path)
+        public TagWrapper(string path)
         {
             Path = path;
-        }
-
-        public void AddTitle(string title)
-        {
-            TagFile.Tag.Title = title;
-        }
-
-        public void AddArtists(string[] artists)
-        {
-            TagFile.Tag.Performers = artists;
         }
     }
 }
