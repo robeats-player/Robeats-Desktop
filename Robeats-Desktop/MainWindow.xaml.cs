@@ -36,7 +36,6 @@ namespace Robeats_Desktop
 
         public static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
-        public static readonly Converter Converter = new Converter(new Engine(@"ffmpeg.exe"));
 
         public MainWindow()
         {
@@ -46,10 +45,11 @@ namespace Robeats_Desktop
         }
 
 
+
         public ObservableCollection<DownloadControl> DownloadControls
         {
-            get { return (ObservableCollection<DownloadControl>)GetValue(DownloadControlsProperty); }
-            set { SetValue(DownloadControlsProperty, value); }
+            get => (ObservableCollection<DownloadControl>)GetValue(DownloadControlsProperty);
+            set => SetValue(DownloadControlsProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for DownloadControls.  This enables animation, styling, binding, etc...
@@ -59,8 +59,8 @@ namespace Robeats_Desktop
 
         public bool IsProgressIndeterminate
         {
-            get { return (bool)GetValue(IsProgressIndeterminateProperty); }
-            set { SetValue(IsProgressIndeterminateProperty, value); }
+            get => (bool)GetValue(IsProgressIndeterminateProperty);
+            set => SetValue(IsProgressIndeterminateProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for IsProgressIndeterminate.  This enables animation, styling, binding, etc...
@@ -111,10 +111,11 @@ namespace Robeats_Desktop
                             $"{tFile.Properties.Duration.Minutes}:{tFile.Properties.Duration.Seconds:D2}");
                         musicItems.Add(musicItem);
                     }
-                    catch (Exception)
+                    catch(Exception)
                     {
+                        // ignored
+                        // Thrown when an item is being used by another program or still being converted.
                     }
-                    
                 }
 
                 ListViewSongs.ItemsSource = musicItems;

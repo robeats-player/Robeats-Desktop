@@ -18,7 +18,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <Label>Title:</Label>
-                <Label>Author:</Label>
+                <Label>Uploader:</Label>
                 <Label>Duration:</Label>
             </StackPanel>
             <StackPanel Grid.Column="1">

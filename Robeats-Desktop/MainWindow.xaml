@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Robeats" Height="494" Width="850"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         TextElement.Foreground="{StaticResource MaterialDesignPaper}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -97,15 +98,13 @@
                                     <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
                                 </Button>
                             </Grid>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*"/>
-                                </Grid.RowDefinitions>
-                                <ListView Name="ListViewDownloads" ItemsSource="{Binding DownloadControls}" ScrollViewer.VerticalScrollBarVisibility="Visible" Margin="0,0,-0.2,-226.8">
-                                    
-                                </ListView>
-                            </Grid>
-                            
+                            <ListView Name="ListViewDownloads" ItemsSource="{Binding DownloadControls}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Width="500"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
                         </StackPanel>
                     </Grid>
 

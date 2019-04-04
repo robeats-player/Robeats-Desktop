@@ -16,17 +16,18 @@ namespace Robeats_Desktop.Gui.Music
         public string Title { get; set; }
         public string Artist { get; set; }
         public string Duration { get; set; }
-
-
-        public MusicItem()
-        {
-        }
+        public ContextMenu ContextMenuItem { get; set; }
 
         public MusicItem(string title, string artist, string duration)
         {
             Title = title;
             Artist = artist;
             Duration = duration;
+
+            MenuItem mi = new MenuItem();
+            ContextMenuItem = new ContextMenu();
+            mi.Header = "NO U";
+            ContextMenuItem.Items.Add(mi);
         }
     }
 }
