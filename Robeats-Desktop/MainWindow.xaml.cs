@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using FFmpeg.NET;
+using Robeats_Desktop.Annotations;
 using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Gui.Music;
 using Robeats_Desktop.Scrape;
@@ -27,7 +30,7 @@ using UtilPath = Robeats_Desktop.Util.Path;
 
 namespace Robeats_Desktop
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, System.ComponentModel.INotifyPropertyChanged
     {
         public ObservableCollection<DownloadControl> DownloadControls { get; set; }
 
@@ -35,28 +38,34 @@ namespace Robeats_Desktop
 
         private readonly Converter _converter;
 
-        private bool _isProgressIndeterminate;
-
-        private double _progress;
 
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
             DownloadControls = new ObservableCollection<DownloadControl>();
             _converter = new Converter(new Engine(@"ffmpeg.exe"));
         }
 
 
+
         public bool IsProgressIndeterminate
         {
-            get => _isProgressIndeterminate;
-            private set
-            {
-                ProgressBarStatus.IsIndeterminate = value;
-                _isProgressIndeterminate = value;
-            }
+            get { return (bool)GetValue(IsProgressIndeterminateProperty); }
+            set { SetValue(IsProgressIndeterminateProperty, value); }
         }
 
+        // Using a DependencyProperty as the backing store for IsProgressIndeterminate.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsProgressIndeterminateProperty =
+            DependencyProperty.Register("IsProgressIndeterminate", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -86,11 +95,18 @@ namespace Robeats_Desktop
                     .Select(Path.GetFileName).ToArray();
                 foreach (var file in files)
                 {
-                    var tFile = TagLib.File.Create(Path.Combine(OutputDir, file));
-                    var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
-                    var musicItem = new MusicItem(title, tFile.Tag.FirstPerformer,
-                        $"{tFile.Properties.Duration.Minutes}:{tFile.Properties.Duration.Seconds:D2}");
-                    musicItems.Add(musicItem);
+                    try
+                    {
+                        var tFile = TagLib.File.Create(Path.Combine(OutputDir, file));
+                        var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
+                        var musicItem = new MusicItem(title, tFile.Tag.FirstPerformer,
+                            $"{tFile.Properties.Duration.Minutes}:{tFile.Properties.Duration.Seconds:D2}");
+                        musicItems.Add(musicItem);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    
                 }
 
                 ListViewSongs.ItemsSource = musicItems;
@@ -142,10 +158,10 @@ namespace Robeats_Desktop
 
                     DownloadControls.Add(downloadControl);
                     ListViewDownloads.ItemsSource = DownloadControls;
+                    IsProgressIndeterminate = false;
                     downloadControl.DownloadVideo(videoInfo.Result);
                 });
             });
-            IsProgressIndeterminate = false;
         }
     }
 }

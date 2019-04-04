@@ -100,6 +100,7 @@ namespace Robeats_Desktop.UserControls
         public DownloadControl()
         {
             InitializeComponent();
+            DataContext = this;
             _main = (MainWindow) Application.Current.MainWindow;
             _converter = new Converter(new Engine("ffmpeg.exe"));
         }
