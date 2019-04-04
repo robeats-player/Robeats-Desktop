@@ -8,7 +8,7 @@ using FFmpeg.NET;
 
 namespace Robeats_Desktop.Ffmpeg
 {
-    class Converter
+    public class Converter
     {
         public Engine Engine { get; set; }
 

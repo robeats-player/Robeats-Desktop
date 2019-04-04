@@ -18,6 +18,7 @@ using YoutubeExplode;
 using YoutubeExplode.Models.MediaStreams;
 using UtilPath = Robeats_Desktop.Util.Path;
 using Path = System.IO.Path;
+using FFmpeg.NET.Events;
 
 namespace Robeats_Desktop.UserControls
 {
@@ -103,8 +104,13 @@ namespace Robeats_Desktop.UserControls
             DataContext = this;
             _main = (MainWindow) Application.Current.MainWindow;
             _converter = new Converter(new Engine("ffmpeg.exe"));
+            _converter.Engine.Complete += OnProcessComplete;
         }
 
+        private void OnProcessComplete(object sender, ConversionCompleteEventArgs e)
+        {
+            ProgressBarDownload.IsIndeterminate = false;
+        }
 
         public async void DownloadVideo(VideoInfo videoInfo)
         {
@@ -128,6 +134,7 @@ namespace Robeats_Desktop.UserControls
             }
 
             //Do the conversion from WebM (or whatever format YouTube might use in the future)
+            ProgressBarDownload.IsIndeterminate = true;
             var file = await _converter.Engine.ConvertAsync(new MediaFile(tempFileName),
                  new MediaFile(Path.Combine(MainWindow.OutputDir, $"{title}.mp3")));
 

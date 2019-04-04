@@ -97,9 +97,15 @@
                                     <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
                                 </Button>
                             </Grid>
-                            <ListView Name="ListViewDownloads">
-                                
-                            </ListView>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                </Grid.RowDefinitions>
+                                <ListView Name="ListViewDownloads" ItemsSource="{Binding DownloadControls}" ScrollViewer.VerticalScrollBarVisibility="Visible" Margin="0,0,-0.2,-226.8">
+                                    
+                                </ListView>
+                            </Grid>
+                            
                         </StackPanel>
                     </Grid>
 

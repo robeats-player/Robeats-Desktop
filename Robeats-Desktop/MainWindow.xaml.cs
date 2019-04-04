@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using FFmpeg.NET;
+using FFmpeg.NET.Events;
 using Robeats_Desktop.Annotations;
 using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Gui.Music;
@@ -30,23 +31,30 @@ using UtilPath = Robeats_Desktop.Util.Path;
 
 namespace Robeats_Desktop
 {
-    public partial class MainWindow : Window, System.ComponentModel.INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public ObservableCollection<DownloadControl> DownloadControls { get; set; }
 
         public static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
-        private readonly Converter _converter;
-
+        public static readonly Converter Converter = new Converter(new Engine(@"ffmpeg.exe"));
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             DownloadControls = new ObservableCollection<DownloadControl>();
-            _converter = new Converter(new Engine(@"ffmpeg.exe"));
         }
 
+
+        public ObservableCollection<DownloadControl> DownloadControls
+        {
+            get { return (ObservableCollection<DownloadControl>)GetValue(DownloadControlsProperty); }
+            set { SetValue(DownloadControlsProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for DownloadControls.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DownloadControlsProperty =
+            DependencyProperty.Register("DownloadControls", typeof(ObservableCollection<DownloadControl>), typeof(MainWindow));
 
 
         public bool IsProgressIndeterminate
@@ -132,6 +140,7 @@ namespace Robeats_Desktop
             IsProgressIndeterminate = true;
             Task.Run(() =>
             {
+
                 string url = null;
                 TextBoxUrl.Dispatcher.Invoke(
                     DispatcherPriority.Normal,
