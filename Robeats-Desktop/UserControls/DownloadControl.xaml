@@ -4,32 +4,39 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Robeats_Desktop.UserControls"
+             xmlns:dataTypes="clr-namespace:Robeats_Desktop.DataTypes"
+             xmlns:robeatsDesktop="clr-namespace:Robeats_Desktop"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
-            <ColumnDefinition Width="1*" MinWidth="150" />
-        </Grid.ColumnDefinitions>
-        <Image Source="{Binding Source}" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <Grid Grid.Column="1" Name="GridInfo">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70" />
-                <ColumnDefinition Width="3*" MaxWidth="250" />
-            </Grid.ColumnDefinitions>
-            <StackPanel>
-                <Label>Title:</Label>
-                <Label>Uploader:</Label>
-                <Label>Duration:</Label>
-            </StackPanel>
-            <StackPanel Grid.Column="1">
-                <Label Content="{Binding Title}" HorizontalAlignment="Left"
-                       VerticalAlignment="Top" />
-                <Label Content="{Binding Uploader}" HorizontalAlignment="Left"
-                       VerticalAlignment="Top" />
-                <Label Content="{Binding Duration}" HorizontalAlignment="Left"
-                       VerticalAlignment="Top" />
-                <ProgressBar Value="{Binding Progress}" Background="Transparent" Name="ProgressBarDownload" />
-            </StackPanel>
-        </Grid>
-    </Grid>
+    <ListView ItemsSource="{Binding Downloads, RelativeSource={RelativeSource AncestorType=robeatsDesktop:MainWindow}}">
+        <ListView.ItemTemplate>
+            <DataTemplate DataType="dataTypes:DownloadItem">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="1*" MinWidth="150" />
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{Binding Source}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    <Grid Grid.Column="1" Name="GridInfo">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="3*" MaxWidth="250" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <Label>Title:</Label>
+                            <Label>Uploader:</Label>
+                            <Label>Duration:</Label>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label Content="{Binding Title}" />
+                            <Label Content="{Binding Artist}" HorizontalAlignment="Left"
+                                   VerticalAlignment="Top" />
+                            <Label Content="{Binding Duration}" HorizontalAlignment="Left"
+                                   VerticalAlignment="Top" />
+                            <ProgressBar Value="{Binding Progress}" Background="Transparent" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </UserControl>

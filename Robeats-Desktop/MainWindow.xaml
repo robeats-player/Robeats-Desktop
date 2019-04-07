@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         Title="Robeats" Height="494" Width="850"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
         TextElement.Foreground="{StaticResource MaterialDesignPaper}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -46,6 +45,7 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="3" />
+                            <RowDefinition Height="100" />
                             <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
@@ -57,7 +57,7 @@
                             <Label Style="{StaticResource Title}" Content="Download" />
                             <Grid Margin="4">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="9*" />
+                                    <ColumnDefinition Width="8*" />
                                     <ColumnDefinition Width="1*" MinWidth="60" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox KeyDown="TextBoxUrl_OnKeyDown"
@@ -98,14 +98,11 @@
                                     <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
                                 </Button>
                             </Grid>
-                            <ListView Name="ListViewDownloads" ItemsSource="{Binding DownloadControls}">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Width="500"/>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
+                            <CheckBox Name="CheckBoxPlaylist">Entire playlist</CheckBox>
                         </StackPanel>
+                        <ScrollViewer Grid.Row="2">
+                            <local:DownloadControl/>
+                        </ScrollViewer>
                     </Grid>
 
                 </TabItem>
@@ -128,6 +125,7 @@
                                 <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Title}" />
                                 <GridViewColumn Header="Artist" Width="200" DisplayMemberBinding="{Binding Artist}" />
                                 <GridViewColumn Header="Duration" Width="80" DisplayMemberBinding="{Binding Duration}" />
+                                <GridViewColumn Header="Hash" Width="80" DisplayMemberBinding="{Binding Hash}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -144,6 +142,7 @@
                             <TextBlock Grid.Column="1">Playlists</TextBlock>
                         </Grid>
                     </TabItem.Header>
+                    <local:PlaylistsControl />
                 </TabItem>
                 <!--Network Devices-->
                 <TabItem Name="TabItemNetwork">

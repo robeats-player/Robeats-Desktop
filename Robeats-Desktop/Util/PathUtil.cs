@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Robeats_Desktop.Util
 {
-    class Path
+    public class PathUtil
     {
         public static string Sanitize(string pathString)
         {

@@ -12,9 +12,9 @@ namespace Robeats_Desktop.Ffmpeg
     {
         public Engine Engine { get; set; }
 
-        public Converter(Engine engine)
+        public Converter()
         {
-            Engine = engine;
+            Engine = new Engine("ffmpeg.exe");
         }
 
         /// <summary>

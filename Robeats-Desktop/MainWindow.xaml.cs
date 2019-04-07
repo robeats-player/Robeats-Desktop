@@ -18,22 +18,20 @@ using System.Windows.Threading;
 using FFmpeg.NET;
 using FFmpeg.NET.Events;
 using Robeats_Desktop.Annotations;
+using Robeats_Desktop.DataTypes;
 using Robeats_Desktop.Ffmpeg;
-using Robeats_Desktop.Gui.Music;
-using Robeats_Desktop.Scrape;
 using Robeats_Desktop.UserControls;
 using Robeats_Desktop.Util;
 using YoutubeExplode;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
 using Path = System.IO.Path;
-using UtilPath = Robeats_Desktop.Util.Path;
+using Playlist = YoutubeExplode.Models.Playlist;
 
 namespace Robeats_Desktop
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-
         public static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
 
@@ -41,31 +39,30 @@ namespace Robeats_Desktop
         {
             InitializeComponent();
             DataContext = this;
-            DownloadControls = new ObservableCollection<DownloadControl>();
+            Downloads = new ObservableCollection<DownloadItem>();
         }
 
-
-
-        public ObservableCollection<DownloadControl> DownloadControls
+        public ObservableCollection<DownloadItem> Downloads
         {
-            get => (ObservableCollection<DownloadControl>)GetValue(DownloadControlsProperty);
-            set => SetValue(DownloadControlsProperty, value);
+            get => (ObservableCollection<DownloadItem>) GetValue(DownloadsProperty);
+            set => SetValue(DownloadsProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for DownloadControls.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty DownloadControlsProperty =
-            DependencyProperty.Register("DownloadControls", typeof(ObservableCollection<DownloadControl>), typeof(MainWindow));
+        // Using a DependencyProperty as the backing store for Downloads.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DownloadsProperty =
+            DependencyProperty.Register("Downloads", typeof(ObservableCollection<DownloadItem>), typeof(MainWindow));
 
 
         public bool IsProgressIndeterminate
         {
-            get => (bool)GetValue(IsProgressIndeterminateProperty);
+            get => (bool) GetValue(IsProgressIndeterminateProperty);
             set => SetValue(IsProgressIndeterminateProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for IsProgressIndeterminate.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsProgressIndeterminateProperty =
-            DependencyProperty.Register("IsProgressIndeterminate", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+            DependencyProperty.Register("IsProgressIndeterminate", typeof(bool), typeof(MainWindow),
+                new PropertyMetadata(false));
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -77,7 +74,19 @@ namespace Robeats_Desktop
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ProcessVideo();
+            if (CheckBoxPlaylist.IsChecked != null && CheckBoxPlaylist.IsChecked.Value)
+            {
+                ProcessPlaylist(TextBoxUrl.Text);
+            }
+            else
+            {
+                var url = TextBoxUrl.Text;
+                Task.Run(() =>
+                {
+                    Task.WaitAll(ProcessVideo(url));
+                    DownloadQueue.DownloadNext();
+                });
+            }
         }
 
 
@@ -86,32 +95,49 @@ namespace Robeats_Desktop
         /// </summary>
         /// <param name="url"></param>
         /// <returns>return a <see cref="Task{TResult}"/></returns>
-        private async Task<VideoInfo> GetVideoAsync(string url)
+        private async Task<Video> GetVideoAsync(string url)
         {
             var id = YoutubeClient.ParseVideoId(url);
             var client = new YoutubeClient();
-            return new VideoInfo {Url = url, Video = await client.GetVideoAsync(id), YoutubeClient = client};
+            return await client.GetVideoAsync(id);
         }
 
+        private async Task<Playlist> GetPlaylistAsync(string url)
+        {
+            try
+            {
+                var id = YoutubeClient.ParsePlaylistId(url);
+                var client = new YoutubeClient();
+                return await client.GetPlaylistAsync(id);
+            }
+            catch (FormatException ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+                return null;
+            }
+            
+        }
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TabItemMusic.IsSelected)
             {
-                var musicItems = new List<MusicItem>();
+                var musicItems = new List<Song>();
                 var files = Directory.GetFiles(OutputDir, "*.mp3")
                     .Select(Path.GetFileName).ToArray();
                 foreach (var file in files)
                 {
                     try
                     {
-                        var tFile = TagLib.File.Create(Path.Combine(OutputDir, file));
+                        var fullName = Path.Combine(OutputDir, file);
+                        var tFile = TagLib.File.Create(fullName);
                         var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
-                        var musicItem = new MusicItem(title, tFile.Tag.FirstPerformer,
-                            $"{tFile.Properties.Duration.Minutes}:{tFile.Properties.Duration.Seconds:D2}");
+                        var musicItem = new Song(title, tFile.Tag.FirstPerformer,
+                            $"{(int) tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds:D2}",
+                            Md_5.Calculate(fullName));
                         musicItems.Add(musicItem);
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         // ignored
                         // Thrown when an item is being used by another program or still being converted.
@@ -132,45 +158,75 @@ namespace Robeats_Desktop
         {
             if (e.Key is Key.Enter)
             {
-                ProcessVideo();
+                if (CheckBoxPlaylist.IsChecked != null && CheckBoxPlaylist.IsChecked.Value)
+                {
+                    ProcessPlaylist(TextBoxUrl.Text);
+                }
+                else
+                {
+                    var url = TextBoxUrl.Text;
+                    Task.Run(() =>
+                    {
+                        Task.WaitAll(ProcessVideo(url));
+                        DownloadQueue.DownloadNext();
+                    });
+                }
             }
         }
 
-        private void ProcessVideo()
+
+        private void ProcessPlaylist(string url)
         {
-            IsProgressIndeterminate = true;
-            Task.Run(() =>
+            Task.Run(() => GetPlaylistAsync(url)).ContinueWith(playlistResult =>
             {
-
-                string url = null;
-                TextBoxUrl.Dispatcher.Invoke(
-                    DispatcherPriority.Normal,
-                    (ThreadStart) delegate { url = TextBoxUrl.Text; }
-                );
-                return GetVideoAsync(url);
-            }).ContinueWith(videoInfo =>
-            {
-                var video = videoInfo.Result.Video;
-                Application.Current.Dispatcher.Invoke((Action) delegate
+                if(playlistResult.Result == null) return;
+                var playlist = playlistResult.Result;
+                var tasks = new Task[playlist.Videos.Count];
+                for (int i = 0; i < playlist.Videos.Count; i++)
                 {
-                    var downloadControl = new DownloadControl
-                    {
-                        Title = video.Title,
-                        Uploader = video.Author,
-                        Duration = video.Duration.ToString(),
-                        Progress = 0,
-                        Source = Thumbnail.Download(video.Thumbnails.MediumResUrl)
-                    };
-                    foreach (var control in DownloadControls)
-                    {
-                        if (control.Title.Equals(downloadControl.Title)) return;
-                    }
+                    tasks[i] = ProcessVideo(playlist.Videos[i].GetUrl());
+                }
 
-                    DownloadControls.Add(downloadControl);
-                    ListViewDownloads.ItemsSource = DownloadControls;
-                    IsProgressIndeterminate = false;
-                    downloadControl.DownloadVideo(videoInfo.Result);
-                });
+                Task.WaitAll(tasks);
+
+            }).ContinueWith(task =>
+            {
+                while (DownloadQueue.HasNext())
+                {
+                    if (DownloadQueue.Count() > 3)
+                    {
+                        DownloadQueue.DownloadNext(3);
+                    }
+                    else
+                    {
+                        DownloadQueue.DownloadNext(DownloadQueue.Count());
+                    }
+                }
+            });
+        }
+
+
+        private async Task ProcessVideo(string url)
+        {
+            Application.Current.Dispatcher.Invoke(delegate { IsProgressIndeterminate = true; });
+            var video = await GetVideoAsync(url);
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                var download = new DownloadItem(video.Title, video.Author, video.Duration.ToString(), "",
+                    video.Thumbnails.MediumResUrl, video.GetUrl());
+                foreach (var control in Downloads)
+                {
+                    if (control.Title.Equals(download.Title))
+                    {
+                        IsProgressIndeterminate = false;
+                        return;
+                    }
+                }
+
+                IsProgressIndeterminate = false;
+                Downloads.Add(download);
+                DownloadQueue.Add(download);
+                //DownloadVideo(videoInfo.Result);
             });
         }
     }
