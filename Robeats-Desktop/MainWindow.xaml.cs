@@ -30,9 +30,21 @@ using Playlist = YoutubeExplode.Models.Playlist;
 
 namespace Robeats_Desktop
 {
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
         public static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+
+
+
+        public ObservableCollection<Song> Songs
+        {
+            get => (ObservableCollection<Song>)GetValue(SongsProperty);
+            set => SetValue(SongsProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for Songs.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SongsProperty =
+            DependencyProperty.Register("Songs", typeof(ObservableCollection<Song>), typeof(MainWindow));
 
 
         public MainWindow()
@@ -40,6 +52,7 @@ namespace Robeats_Desktop
             InitializeComponent();
             DataContext = this;
             Downloads = new ObservableCollection<DownloadItem>();
+            Songs = new ObservableCollection<Song>();
         }
 
         public ObservableCollection<DownloadItem> Downloads
@@ -64,13 +77,6 @@ namespace Robeats_Desktop
             DependencyProperty.Register("IsProgressIndeterminate", typeof(bool), typeof(MainWindow),
                 new PropertyMetadata(false));
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -122,7 +128,17 @@ namespace Robeats_Desktop
         {
             if (TabItemMusic.IsSelected)
             {
-                var musicItems = new List<Song>();
+                if (Songs.Count == 0)
+                {
+                    GetLocalSongsAsync();
+                }
+            }
+        }
+
+        private async void GetLocalSongsAsync()
+        {
+            await Task.Run(() =>
+            {
                 var files = Directory.GetFiles(OutputDir, "*.mp3")
                     .Select(Path.GetFileName).ToArray();
                 foreach (var file in files)
@@ -133,9 +149,13 @@ namespace Robeats_Desktop
                         var tFile = TagLib.File.Create(fullName);
                         var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
                         var musicItem = new Song(title, tFile.Tag.FirstPerformer,
-                            $"{(int) tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds:D2}",
+                            $"{(int)tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds:D2}",
                             Md_5.Calculate(fullName));
-                        musicItems.Add(musicItem);
+                        Application.Current.Dispatcher.Invoke(delegate
+                        {
+                            Songs.Add(musicItem);
+                        });
+
                     }
                     catch (Exception)
                     {
@@ -144,8 +164,7 @@ namespace Robeats_Desktop
                     }
                 }
 
-                ListViewSongs.ItemsSource = musicItems;
-            }
+            });
         }
 
         private void TextBoxUrl_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

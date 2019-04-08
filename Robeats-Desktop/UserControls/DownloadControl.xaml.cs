@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using AngleSharp;
@@ -46,6 +47,19 @@ namespace Robeats_Desktop.UserControls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        
+
+        private void UIElement_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                e.Handled = true;
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                {
+                    RoutedEvent = MouseWheelEvent, Source = sender
+                };
+                var parent = ((Control)sender).Parent as UIElement;
+                parent?.RaiseEvent(eventArg);
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Robeats" Height="494" Width="850"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:robeatsDesktop="clr-namespace:Robeats_Desktop"
         TextElement.Foreground="{StaticResource MaterialDesignPaper}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -118,7 +119,7 @@
                             <TextBlock Grid.Column="1">Local Music</TextBlock>
                         </Grid>
                     </TabItem.Header>
-                    <ListView Name="ListViewSongs">
+                    <ListView Name="ListViewSongs" ItemsSource="{Binding Songs, RelativeSource={RelativeSource AncestorType=robeatsDesktop:MainWindow}}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="40" />
