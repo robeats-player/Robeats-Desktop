@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading.Tasks;
 using FFmpeg.NET;
 using Robeats_Desktop.DataTypes;
-using Robeats_Desktop.Ffmpeg;
 using YoutubeExplode;
 using YoutubeExplode.Models.MediaStreams;
 
@@ -77,7 +76,7 @@ namespace Robeats_Desktop.Util
             Debug.WriteLine("Download complete!");
 
             //Convert the file from WebM (or whatever format is used)
-            var file = await new Converter().Engine.ConvertAsync(new MediaFile(tempFileName),
+            var file = await new Ffmpeg.Converter().Engine.ConvertAsync(new MediaFile(tempFileName),
                 new MediaFile(Path.Combine(MainWindow.OutputDir, $"{PathUtil.Sanitize(item.Title)}.mp3")));
 
             //Delete the temp file
@@ -86,6 +85,7 @@ namespace Robeats_Desktop.Util
             //Write meta data
             var tagWrapper = new TagWrapper(file.FileInfo.FullName, item.DownloadUrl);
             tagWrapper.SetTags();
+            tagWrapper.SetCover();
             Debug.WriteLine("Conversion complete!");
         }
     }

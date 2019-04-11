@@ -22,9 +22,28 @@
                             <ColumnDefinition Width="3*" MaxWidth="250" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <Label>Title:</Label>
-                            <Label>Uploader:</Label>
-                            <Label>Duration:</Label>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="100"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="1*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0">Title:</Label>
+                                <Label Grid.Row="1" Grid.Column="0">Uploader:</Label>
+                                <Label Grid.Row="2" Grid.Column="0">Duration:</Label>
+                                <Label Grid.Row="0" Grid.Column="1" Content="{Binding Title}" />
+                                <Label Grid.Row="1" Grid.Column="1" Content="{Binding Artist}" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" />
+                                <Label Grid.Row="2" Grid.Column="1" Content="{Binding Duration}" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" />
+                                <ProgressBar  Grid.Row="3" Grid.Column="1" Value="{Binding Progress}" Background="Transparent" />
+                            </Grid>
+                            
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <Label Content="{Binding Title}" />

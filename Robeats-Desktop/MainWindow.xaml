@@ -102,7 +102,7 @@
                             <CheckBox Name="CheckBoxPlaylist">Entire playlist</CheckBox>
                         </StackPanel>
                         <ScrollViewer Grid.Row="2">
-                            <local:DownloadControl/>
+                            <local:DownloadControl />
                         </ScrollViewer>
                     </Grid>
 
@@ -119,7 +119,8 @@
                             <TextBlock Grid.Column="1">Local Music</TextBlock>
                         </Grid>
                     </TabItem.Header>
-                    <ListView Name="ListViewSongs" ItemsSource="{Binding Songs, RelativeSource={RelativeSource AncestorType=robeatsDesktop:MainWindow}}">
+                    <ListView Name="ListViewSongs"
+                              ItemsSource="{Binding Songs, RelativeSource={RelativeSource AncestorType=robeatsDesktop:MainWindow}}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="40" />
@@ -157,6 +158,11 @@
                             <TextBlock Grid.Column="1">Network Devices</TextBlock>
                         </Grid>
                     </TabItem.Header>
+                    <StackPanel>
+                        <Button Name="ButtonFindDevices" Content="Find devices" Height="100" Click="ButtonFindDevices_Click"/>
+                        <Button Name="ButtonSendInfo" Content="Discoverable" Height="100" Click="ButtonSendInfo_Click"/>
+                    </StackPanel>
+                    
                 </TabItem>
             </TabControl>
         </DockPanel>

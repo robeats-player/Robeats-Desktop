@@ -26,25 +26,11 @@ namespace Robeats_Desktop.UserControls
     /// <summary>
     /// Interaction logic for DownloadControl.xaml
     /// </summary>
-    public partial class DownloadControl : UserControl, INotifyPropertyChanged
+    public partial class DownloadControl : UserControl
     {
         public DownloadControl()
         {
             InitializeComponent();
-        }
-
-        /*private void OnProcessComplete(object sender, ConversionCompleteEventArgs e)
-        {
-            IsProgressIndeterminate = false;
-        }*/
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
 

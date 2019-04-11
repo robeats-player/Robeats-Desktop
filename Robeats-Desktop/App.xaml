@@ -11,10 +11,10 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/TabControl.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/ListView.xaml" />
-                <!--<ResourceDictionary Source="ResourceDictionaries/ScrollView.xaml" />-->
+                <ResourceDictionary Source="ResourceDictionaries/ScrollView.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!--  Colors  -->
+            <!--  Colors -->
             <Color x:Key="PrimaryColor">#2F2D2E</Color>
             <Color x:Key="PrimaryLightColor">#5E6262</Color>
             <Color x:Key="PrimaryDarkColor">#0D1212</Color>

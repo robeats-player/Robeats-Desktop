@@ -16,6 +16,7 @@ namespace Robeats_Desktop.DataTypes
     public class DownloadItem : Song, INotifyPropertyChanged
     {
         public string ThumbnailUrl { get; set; }
+        public string Cover { get; set; }
         public ImageSource Source { get; set; }
         private double _progress;
         private double _oldProgress;
@@ -46,7 +47,7 @@ namespace Robeats_Desktop.DataTypes
             DownloadUrl = downloadUrl;
             Progress = 0;
             _oldProgress = 0;
-            Source = Thumbnail.Download(thumbnailUrl);
+            Source = Thumbnail.GetImage(thumbnailUrl);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

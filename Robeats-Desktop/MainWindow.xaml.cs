@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +22,8 @@ using FFmpeg.NET.Events;
 using Robeats_Desktop.Annotations;
 using Robeats_Desktop.DataTypes;
 using Robeats_Desktop.Ffmpeg;
+using Robeats_Desktop.Network;
+using Robeats_Desktop.Network.Frames;
 using Robeats_Desktop.UserControls;
 using Robeats_Desktop.Util;
 using YoutubeExplode;
@@ -33,8 +37,6 @@ namespace Robeats_Desktop
     public partial class MainWindow : Window
     {
         public static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-
-
 
         public ObservableCollection<Song> Songs
         {
@@ -201,7 +203,7 @@ namespace Robeats_Desktop
                 if(playlistResult.Result == null) return;
                 var playlist = playlistResult.Result;
                 var tasks = new Task[playlist.Videos.Count];
-                for (int i = 0; i < playlist.Videos.Count; i++)
+                for (var i = 0; i < playlist.Videos.Count; i++)
                 {
                     tasks[i] = ProcessVideo(playlist.Videos[i].GetUrl());
                 }
@@ -212,6 +214,7 @@ namespace Robeats_Desktop
             {
                 while (DownloadQueue.HasNext())
                 {
+                    //TODO make user configurable
                     if (DownloadQueue.Count() > 3)
                     {
                         DownloadQueue.DownloadNext(3);
@@ -246,6 +249,33 @@ namespace Robeats_Desktop
                 Downloads.Add(download);
                 DownloadQueue.Add(download);
                 //DownloadVideo(videoInfo.Result);
+            });
+        }
+
+        private static void IoMethod()
+        {
+            var discovery = new DeviceDiscovery();
+            discovery.SendRequest(ProtocolRequest.DeviceDiscovery);
+            var list = discovery.AwaitResponses(8000);
+            foreach (var robeatsDevice in list)
+            {
+                Console.WriteLine($@"Request received from:{robeatsDevice.EndPoint}");
+            }
+        }
+
+        private void ButtonFindDevices_Click(object sender, RoutedEventArgs e)
+        {
+            //IsProgressIndeterminate = true;
+            Task.Run(() => { IoMethod(); });
+        }
+
+        private void ButtonSendInfo_Click(object sender, RoutedEventArgs e)
+        {
+            var discovery = new DeviceDiscovery();
+            discovery.SendDiscoveryReply(new RobeatsDevice()
+            {
+                Name = "YEET",
+                Id = 240
             });
         }
     }
