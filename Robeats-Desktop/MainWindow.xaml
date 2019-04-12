@@ -93,9 +93,9 @@
                                         </Style>
                                     </TextBox.Style>
                                 </TextBox>
-                                <Button Margin="5,0" Grid.Column="1" HorizontalAlignment="Left"
+                                <Button Name="ButtonDownload" Margin="5,0" Grid.Column="1" HorizontalAlignment="Left"
                                         VerticalAlignment="Top" Height="28"
-                                        Click="Button_Click">
+                                        Click="ButtonDownload_Click">
                                     <materialDesign:PackIcon Kind="FolderDownload" Height="20" Width="20" />
                                 </Button>
                             </Grid>
@@ -158,11 +158,41 @@
                             <TextBlock Grid.Column="1">Network Devices</TextBlock>
                         </Grid>
                     </TabItem.Header>
-                    <StackPanel>
-                        <Button Name="ButtonFindDevices" Content="Find devices" Height="100" Click="ButtonFindDevices_Click"/>
-                        <Button Name="ButtonSendInfo" Content="Discoverable" Height="100" Click="ButtonSendInfo_Click"/>
-                    </StackPanel>
-                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Device Name:"/>
+                            <TextBox Grid.Column="1"  VerticalAlignment="Center" />
+                            <Label Grid.Column="2" Content="Device ID:"/>
+                            <TextBox Grid.Column="3" VerticalAlignment="Center" />
+
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Name="ButtonFindDevices" Content="Find devices"
+                                    Click="ButtonFindDevices_Click" />
+                            <CheckBox Grid.Column="1" Name="ButtonSendInfo" Content="Visible to other devices"
+                                    Click="ButtonSendInfo_Click" />
+                        </Grid>
+                        
+                    </Grid>
                 </TabItem>
             </TabControl>
         </DockPanel>

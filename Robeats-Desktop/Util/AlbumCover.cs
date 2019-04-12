@@ -1,4 +1,4 @@
-﻿namespace Robeats_Desktop.Util
+﻿namespace Robeats_Desktop.DataTypes
 {
     using System;
     using System.Collections.Generic;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Robeats_Desktop.Util
+namespace Robeats_Desktop.DataTypes
 {
     public class PathUtil
     {

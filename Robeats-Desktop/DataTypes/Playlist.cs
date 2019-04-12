@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Robeats_Desktop.Util;
+using Robeats_Desktop.DataTypes;
 
 namespace Robeats_Desktop.DataTypes
 {

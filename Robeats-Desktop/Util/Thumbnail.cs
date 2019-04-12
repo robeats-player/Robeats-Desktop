@@ -11,9 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace Robeats_Desktop.Util
+namespace Robeats_Desktop.DataTypes
 {
-    class Thumbnail
+    public class Thumbnail
     {
         public static BitmapImage GetImage(string url)
         {
@@ -22,7 +22,6 @@ namespace Robeats_Desktop.Util
 
         public static BitmapImage GetImage(Uri url)
         {
-            HttpClient client = new HttpClient();
             BitmapImage bitmap = new BitmapImage();
             bitmap.BeginInit();
             bitmap.UriSource = url;

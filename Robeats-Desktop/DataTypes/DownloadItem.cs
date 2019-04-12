@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Robeats_Desktop.Annotations;
-using Robeats_Desktop.Util;
+using Robeats_Desktop.DataTypes;
 
 namespace Robeats_Desktop.DataTypes
 {

@@ -4,55 +4,54 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using FFmpeg.NET;
-using Robeats_Desktop.DataTypes;
 using YoutubeExplode;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace Robeats_Desktop.Util
+namespace Robeats_Desktop.DataTypes
 {
-    public static class DownloadQueue
+    public class DownloadQueue
     {
-        private static readonly Queue<DownloadItem> Queue;
+        private readonly Queue<DownloadItem> _queue;
 
 
-        static DownloadQueue()
+        public DownloadQueue()
         {
-            Queue = new Queue<DownloadItem>();
+            _queue = new Queue<DownloadItem>();
         }
 
-        public static void Add(DownloadItem item)
+        public void Add(DownloadItem item)
         {
-            Queue.Enqueue(item);
+            _queue.Enqueue(item);
         }
 
-        public static int Count()
+        public int Count()
         {
-            return Queue.Count;
+            return _queue.Count;
         }
 
-        public static bool HasNext()
+        public bool HasNext()
         {
-            return Queue.Count > 0;
+            return _queue.Count > 0;
         }
 
-        public static void DownloadNext()
+        public void DownloadNext()
         {
             DownloadNext(1);
         }
 
-        public static void DownloadNext(int parallelDownloads)
+        public void DownloadNext(int parallelDownloads)
         {
             var tasks = new Task[parallelDownloads];
             for (var i = 0; i < parallelDownloads; i++)
             {
-                var item = Queue.Dequeue();
+                var item = _queue.Dequeue();
                 tasks[i] = Download(item);
             }
 
             Task.WaitAll(tasks);
         }
 
-        private static async Task Download(DownloadItem item)
+        private async Task Download(DownloadItem item)
         {
             //Get the video ID
             var id = YoutubeClient.ParseVideoId(item.DownloadUrl);

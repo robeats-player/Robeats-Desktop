@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 using Robeats_Desktop.DataTypes;
 using TagLib;
 
-namespace Robeats_Desktop.Util
+namespace Robeats_Desktop.DataTypes
 {
     enum RequestType
     {

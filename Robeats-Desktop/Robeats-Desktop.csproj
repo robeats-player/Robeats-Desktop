@@ -100,8 +100,7 @@
       <DependentUpon>PlaylistsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\AlbumCover.cs" />
-    <Compile Include="Util\DownloadQueue.cs" />
-    <Compile Include="Util\Filter.cs" />
+    <Compile Include="DataTypes\DownloadQueue.cs" />
     <Compile Include="Util\Md_5.cs" />
     <Compile Include="Util\PathUtil.cs" />
     <Compile Include="Util\TagWrapper.cs" />

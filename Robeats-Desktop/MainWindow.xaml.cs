@@ -25,7 +25,6 @@ using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Network;
 using Robeats_Desktop.Network.Frames;
 using Robeats_Desktop.UserControls;
-using Robeats_Desktop.Util;
 using YoutubeExplode;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
@@ -80,8 +79,9 @@ namespace Robeats_Desktop
                 new PropertyMetadata(false));
 
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonDownload_Click(object sender, RoutedEventArgs e)
         {
+            //Check if playlist checkbox is checked, if so download the playlist instead of the song.
             if (CheckBoxPlaylist.IsChecked != null && CheckBoxPlaylist.IsChecked.Value)
             {
                 ProcessPlaylist(TextBoxUrl.Text);

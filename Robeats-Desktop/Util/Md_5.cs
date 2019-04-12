@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Robeats_Desktop.Util
+namespace Robeats_Desktop.DataTypes
 {
     static class Md_5
     {
