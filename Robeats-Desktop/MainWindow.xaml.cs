@@ -25,6 +25,7 @@ using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Network;
 using Robeats_Desktop.Network.Frames;
 using Robeats_Desktop.UserControls;
+using Robeats_Desktop.Util;
 using YoutubeExplode;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
@@ -81,50 +82,10 @@ namespace Robeats_Desktop
 
         private void ButtonDownload_Click(object sender, RoutedEventArgs e)
         {
-            //Check if playlist checkbox is checked, if so download the playlist instead of the song.
-            if (CheckBoxPlaylist.IsChecked != null && CheckBoxPlaylist.IsChecked.Value)
-            {
-                ProcessPlaylist(TextBoxUrl.Text);
-            }
-            else
-            {
-                var url = TextBoxUrl.Text;
-                Task.Run(() =>
-                {
-                    Task.WaitAll(ProcessVideo(url));
-                    DownloadQueue.DownloadNext();
-                });
-            }
+            ProcessVideos();
         }
 
-
-        /// <summary>
-        /// Get the web video async
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns>return a <see cref="Task{TResult}"/></returns>
-        private async Task<Video> GetVideoAsync(string url)
-        {
-            var id = YoutubeClient.ParseVideoId(url);
-            var client = new YoutubeClient();
-            return await client.GetVideoAsync(id);
-        }
-
-        private async Task<Playlist> GetPlaylistAsync(string url)
-        {
-            try
-            {
-                var id = YoutubeClient.ParsePlaylistId(url);
-                var client = new YoutubeClient();
-                return await client.GetPlaylistAsync(id);
-            }
-            catch (FormatException ex)
-            {
-                Debug.WriteLine(ex.StackTrace);
-                return null;
-            }
-            
-        }
+        
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -179,79 +140,49 @@ namespace Robeats_Desktop
         {
             if (e.Key is Key.Enter)
             {
-                if (CheckBoxPlaylist.IsChecked != null && CheckBoxPlaylist.IsChecked.Value)
-                {
-                    ProcessPlaylist(TextBoxUrl.Text);
-                }
-                else
-                {
-                    var url = TextBoxUrl.Text;
-                    Task.Run(() =>
-                    {
-                        Task.WaitAll(ProcessVideo(url));
-                        DownloadQueue.DownloadNext();
-                    });
-                }
+                ProcessVideos();
             }
         }
 
-
-        private void ProcessPlaylist(string url)
+        private void ProcessVideos()
         {
-            Task.Run(() => GetPlaylistAsync(url)).ContinueWith(playlistResult =>
-            {
-                if(playlistResult.Result == null) return;
-                var playlist = playlistResult.Result;
-                var tasks = new Task[playlist.Videos.Count];
-                for (var i = 0; i < playlist.Videos.Count; i++)
-                {
-                    tasks[i] = ProcessVideo(playlist.Videos[i].GetUrl());
-                }
+            var url = TextBoxUrl.Text;
 
-                Task.WaitAll(tasks);
-
-            }).ContinueWith(task =>
+            //Check if playlist checkbox is checked, if so download the playlist instead of the song.
+            if (CheckBoxPlaylist.IsChecked != null && CheckBoxPlaylist.IsChecked.Value)
             {
-                while (DownloadQueue.HasNext())
+                //TODO make configurable
+
+                Task.Run(() => Download.GetPlaylistAsync(url)).ContinueWith(playlistResult =>
                 {
-                    //TODO make user configurable
-                    if (DownloadQueue.Count() > 3)
+                    var downloadQueue = new DownloadQueue();
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        DownloadQueue.DownloadNext(3);
-                    }
-                    else
+
+                        foreach (var resultVideo in playlistResult.Result.Videos)
+                        {
+                            var downloadItem = new DownloadItem(resultVideo);
+                            Downloads.Add(downloadItem);
+                            downloadQueue.Add(downloadItem);
+                        }
+
+                    });
+                    Download.DownloadPlaylist(downloadQueue, 3);
+                });
+            }
+            else
+            {
+                Task.Run(() => Download.GetVideoAsync(url)).ContinueWith(videoResult =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        DownloadQueue.DownloadNext(DownloadQueue.Count());
-                    }
-                }
-            });
+                        var downloadItem = new DownloadItem(videoResult.Result);
+                        Downloads.Add(downloadItem);
+                        Download.DownloadSong(new DownloadQueue { downloadItem });
+                    });
+                });
+            }
         }
-
-
-        private async Task ProcessVideo(string url)
-        {
-            Application.Current.Dispatcher.Invoke(delegate { IsProgressIndeterminate = true; });
-            var video = await GetVideoAsync(url);
-            Application.Current.Dispatcher.Invoke(delegate
-            {
-                var download = new DownloadItem(video.Title, video.Author, video.Duration.ToString(), "",
-                    video.Thumbnails.MediumResUrl, video.GetUrl());
-                foreach (var control in Downloads)
-                {
-                    if (control.Title.Equals(download.Title))
-                    {
-                        IsProgressIndeterminate = false;
-                        return;
-                    }
-                }
-
-                IsProgressIndeterminate = false;
-                Downloads.Add(download);
-                DownloadQueue.Add(download);
-                //DownloadVideo(videoInfo.Result);
-            });
-        }
-
         private static void IoMethod()
         {
             var discovery = new DeviceDiscovery();
@@ -278,5 +209,6 @@ namespace Robeats_Desktop
                 Id = 240
             });
         }
+
     }
 }

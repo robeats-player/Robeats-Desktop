@@ -2,36 +2,33 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FFmpeg.NET;
 using YoutubeExplode;
+using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
 
 namespace Robeats_Desktop.DataTypes
 {
-    public class DownloadQueue
+    public class DownloadQueue : Queue<DownloadItem>
     {
-        private readonly Queue<DownloadItem> _queue;
-
+        public List<Song> ProcessedSongs { get; set; }
 
         public DownloadQueue()
         {
-            _queue = new Queue<DownloadItem>();
+            ProcessedSongs = new List<Song>();
         }
 
         public void Add(DownloadItem item)
         {
-            _queue.Enqueue(item);
+            Enqueue(item);
         }
 
-        public int Count()
-        {
-            return _queue.Count;
-        }
 
         public bool HasNext()
         {
-            return _queue.Count > 0;
+            return Count > 0;
         }
 
         public void DownloadNext()
@@ -39,29 +36,33 @@ namespace Robeats_Desktop.DataTypes
             DownloadNext(1);
         }
 
+
+        /// <summary>
+        /// Download <see cref="Video"/>'s parallel.
+        /// </summary>
+        /// <param name="parallelDownloads">Amount of parallel downloads</param>
         public void DownloadNext(int parallelDownloads)
         {
-            var tasks = new Task[parallelDownloads];
-            for (var i = 0; i < parallelDownloads; i++)
+            ThreadPool.SetMaxThreads(parallelDownloads, 0);
+            for (var i = 0; i < Count; i++)
             {
-                var item = _queue.Dequeue();
-                tasks[i] = Download(item);
+                ThreadPool.QueueUserWorkItem(Download, Dequeue());
             }
-
-            Task.WaitAll(tasks);
+            
         }
 
-        private async Task Download(DownloadItem item)
+        private void Download(object downloadObj)
         {
+            if (!(downloadObj is DownloadItem item)) return;
             //Get the video ID
-            var id = YoutubeClient.ParseVideoId(item.DownloadUrl);
+            var id = YoutubeClient.ParseVideoId(item.Video.GetUrl());
             var client = new YoutubeClient();
             //Get information from the youtube video
-            var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(id);
-
+            var streamInfoSet = client.GetVideoMediaStreamInfosAsync(id).Result;
             //Get best audio stream
             var audioStream = streamInfoSet.Audio.WithHighestBitrate();
 
+            //TODO Handle progress
             //Set the download progress to the progress of the item
             var progress = new Progress<double>(p => item.Progress = p);
 
@@ -69,22 +70,25 @@ namespace Robeats_Desktop.DataTypes
             var tempFileName = Path.GetTempFileName();
             using (var fileStream = File.Create(tempFileName, 1024))
             {
-                await client.DownloadMediaStreamAsync(audioStream, fileStream, progress);
+                client.DownloadMediaStreamAsync(audioStream, fileStream, progress).Wait();
             }
 
             Debug.WriteLine("Download complete!");
-
+            var songPath = Path.Combine(MainWindow.OutputDir, $"{PathUtil.Sanitize(item.Video.Title)}.mp3");
             //Convert the file from WebM (or whatever format is used)
-            var file = await new Ffmpeg.Converter().Engine.ConvertAsync(new MediaFile(tempFileName),
-                new MediaFile(Path.Combine(MainWindow.OutputDir, $"{PathUtil.Sanitize(item.Title)}.mp3")));
+            var file = new Ffmpeg.Converter().Engine.ConvertAsync(new MediaFile(tempFileName),
+                new MediaFile(songPath)).Result;
 
             //Delete the temp file
             File.Delete(tempFileName);
+            ProcessedSongs.Add(new Song(){AbsolutePath = file.FileInfo.FullName});
 
+
+            //TODO change this to be more dynamic and robust
             //Write meta data
-            var tagWrapper = new TagWrapper(file.FileInfo.FullName, item.DownloadUrl);
+            var tagWrapper = new TagWrapper(file.FileInfo.FullName, item.Video.GetUrl());
             tagWrapper.SetTags();
-            tagWrapper.SetCover();
+            //tagWrapper.SetCover();
             Debug.WriteLine("Conversion complete!");
         }
     }

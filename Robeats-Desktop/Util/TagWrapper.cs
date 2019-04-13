@@ -111,7 +111,7 @@ namespace Robeats_Desktop.DataTypes
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
+                return null;
             }
         }
 
@@ -121,6 +121,7 @@ namespace Robeats_Desktop.DataTypes
         public void SetTags()
         {
             var dictionary = Get();
+            if (dictionary == null) return;
             foreach (var item in dictionary)
             {
                 switch (item.Key.ToLower())

@@ -10,44 +10,35 @@ using System.Windows;
 using System.Windows.Media;
 using Robeats_Desktop.Annotations;
 using Robeats_Desktop.DataTypes;
+using YoutubeExplode.Models;
 
 namespace Robeats_Desktop.DataTypes
 {
-    public class DownloadItem : Song, INotifyPropertyChanged
+    public class DownloadItem : INotifyPropertyChanged
     {
-        public string ThumbnailUrl { get; set; }
-        public string Cover { get; set; }
+        public Video Video { get; set; }
         public ImageSource Source { get; set; }
         private double _progress;
         private double _oldProgress;
         public double Progress
         {
-            get { return _progress; }
+            get => _progress;
             set
             {
                 _progress = value;
-                if (_progress > _oldProgress + 0.1)
+                if (_progress > _oldProgress + 0.02)
                 {
                     _oldProgress = _progress;
                     OnPropertyChanged();
                 }
             }
         }
-
-        public string DownloadUrl { get; set; }
-
-        public DownloadItem(string title, string artist, string duration, string hash, string thumbnailUrl, string downloadUrl) : base(title, artist,
-            duration, hash)
+        public DownloadItem(Video video)
         {
-            Title = title;
-            Artist = artist;
-            Duration = duration;
-            Hash = hash;
-            ThumbnailUrl = thumbnailUrl;
-            DownloadUrl = downloadUrl;
             Progress = 0;
             _oldProgress = 0;
-            Source = Thumbnail.GetImage(thumbnailUrl);
+            Video = video;
+            Source = Thumbnail.GetImage(Video.Thumbnails.MediumResUrl);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

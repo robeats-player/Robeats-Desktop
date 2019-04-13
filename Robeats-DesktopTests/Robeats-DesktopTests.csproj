@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThumbnailTests.cs" />
+    <Compile Include="DownloadTests.cs" />
     <Compile Include="UtilTests.cs" />
   </ItemGroup>
   <ItemGroup>

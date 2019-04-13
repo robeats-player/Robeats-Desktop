@@ -12,48 +12,24 @@
             <DataTemplate DataType="dataTypes:DownloadItem">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="250" />
-                        <ColumnDefinition Width="1*" MinWidth="150" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="400" />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="10"/>
+                    </Grid.RowDefinitions>
                     <Image Source="{Binding Source}" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                    <Grid Grid.Column="1" Name="GridInfo">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="3*" MaxWidth="250" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="100"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0">Title:</Label>
-                                <Label Grid.Row="1" Grid.Column="0">Uploader:</Label>
-                                <Label Grid.Row="2" Grid.Column="0">Duration:</Label>
-                                <Label Grid.Row="0" Grid.Column="1" Content="{Binding Title}" />
-                                <Label Grid.Row="1" Grid.Column="1" Content="{Binding Artist}" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" />
-                                <Label Grid.Row="2" Grid.Column="1" Content="{Binding Duration}" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" />
-                                <ProgressBar  Grid.Row="3" Grid.Column="1" Value="{Binding Progress}" Background="Transparent" />
-                            </Grid>
-                            
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <Label Content="{Binding Title}" />
-                            <Label Content="{Binding Artist}" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" />
-                            <Label Content="{Binding Duration}" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" />
-                            <ProgressBar Value="{Binding Progress}" Background="Transparent" />
-                        </StackPanel>
+                    <Grid Grid.Row="0" Grid.Column="1" Name="GridInfo">
+                        <Border Margin="10,0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Video.Title}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Video.Author}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Video.Duration}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Value="{Binding Progress}" Background="Transparent" />
                 </Grid>
             </DataTemplate>
         </ListView.ItemTemplate>
