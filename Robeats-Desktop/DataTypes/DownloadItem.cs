@@ -38,7 +38,7 @@ namespace Robeats_Desktop.DataTypes
             Progress = 0;
             _oldProgress = 0;
             Video = video;
-            Source = Thumbnail.GetImage(Video.Thumbnails.MediumResUrl);
+            Source = ImageHelper.GetImage(Video.Thumbnails.MediumResUrl);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 
 namespace Robeats_Desktop.DataTypes
 {
-    public class Thumbnail
+    public class ImageHelper
     {
         public static BitmapImage GetImage(string url)
         {
@@ -29,21 +29,23 @@ namespace Robeats_Desktop.DataTypes
             return bitmap;
         }
 
-        public static Bitmap DownloadImage(string imageUrl)
+        public static Stream GetAsStream(string imageUrl)
         {
 
-            WebClient client = new WebClient();
-            Stream stream = client.OpenRead(imageUrl);
-            if (stream != null)
+            using (var client = new WebClient())
             {
-                Bitmap bitmap = new Bitmap(stream);
-                stream.Flush();
-                stream.Close();
-                return bitmap;
-                
+                return client.OpenRead(imageUrl);
             }
-            client.Dispose();
-            return null;
+        }
+
+        public static Bitmap GetAsBitmap(string imageUrl)
+        {
+            using (var ms = GetAsStream(imageUrl))
+            {
+                if (ms == null) return null;
+                var bitmap = new Bitmap(ms);
+                return bitmap;
+            }
         }
 
     }

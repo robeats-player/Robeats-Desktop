@@ -9,7 +9,7 @@ namespace Robeats_Desktop.DataTypes
         public string Duration { get; set; }
         public string Hash { get; set; }
         public string AbsolutePath { get; set; }
-
+        public string Album { get; set; }
         public Song()
         {
         }
@@ -30,6 +30,12 @@ namespace Robeats_Desktop.DataTypes
         public Song(string title, string artist, string duration, string absolutePath) : this(title, artist, duration)
         {
             AbsolutePath = absolutePath;
+        }
+
+        public override string ToString()
+        {
+            return
+                $"Title:{Title}, Artist:{Artist}, Duration:{Duration}, Hash:{Hash}, AbsolutePath:{AbsolutePath}, Album:{Album}";
         }
     }
 }
