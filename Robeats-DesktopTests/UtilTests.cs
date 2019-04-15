@@ -19,7 +19,7 @@ namespace Robeats_DesktopTests
         public void ThumbnailDownloadTest()
         {
             //Download a random image
-            var bitmap = ImageHelper.DownloadImage(
+            var bitmap = ImageHelper.GetAsBitmap(
                 "https://d1q6f0aelx0por.cloudfront.net/fa443219-42e0-4886-96b4-8733de694b72-c641a5d6-1ebf-44ee-9607-aef9b4ca1a3b-logo_large.png");
             Assert.IsNotNull(bitmap);
         }

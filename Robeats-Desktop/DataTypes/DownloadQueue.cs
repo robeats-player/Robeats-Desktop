@@ -53,7 +53,7 @@ namespace Robeats_Desktop.DataTypes
             
         }
 
-        private void Download(object downloadObj)
+        private async void Download(object downloadObj)
         {
             if (!(downloadObj is DownloadItem item)) return;
             var video = item.Video;
@@ -110,7 +110,12 @@ namespace Robeats_Desktop.DataTypes
             tagHandler.SetTags();
 
             //Set the cover
-            //tagWrapper.SetCover();
+            var coverParser = new CoverParser(song.Title, song.Artist);
+            var bitmapCover = await coverParser.GetAsync();
+            if (bitmapCover != null)
+            {
+                tagHandler.SetCover(bitmapCover);
+            }
             Debug.WriteLine("Conversion complete!");
         }
     }

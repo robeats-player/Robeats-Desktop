@@ -12,7 +12,7 @@ namespace Robeats_DesktopTests
         [Test]
         public void DownloadThumbnailTest()
         {
-            ImageHelper.DownloadImage("https://www.pdr.nl/uploads/img/IMG18-08-22_16-47-17.png");
+            ImageHelper.GetAsBitmap("https://www.pdr.nl/uploads/img/IMG18-08-22_16-47-17.png");
         }
 
 
