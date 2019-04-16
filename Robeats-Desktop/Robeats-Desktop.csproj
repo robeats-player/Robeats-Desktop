@@ -90,6 +90,8 @@
     <Compile Include="Network\Frames\StateProtocol.cs" />
     <Compile Include="Network\INetworkHelper.cs" />
     <Compile Include="Network\RobeatsDevice.cs" />
+    <Compile Include="Network\SongSyncListener.cs" />
+    <Compile Include="Network\SongSyncSender.cs" />
     <Compile Include="Network\TcpHelper.cs" />
     <Compile Include="Network\UdpHelper.cs" />
     <Compile Include="Parsers\CoverParser.cs" />
@@ -98,13 +100,16 @@
     <Compile Include="UserControls\DownloadControl.xaml.cs">
       <DependentUpon>DownloadControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\NetworkControl.xaml.cs">
+      <DependentUpon>NetworkControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PlaylistsControl.xaml.cs">
       <DependentUpon>PlaylistsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\AlbumCover.cs" />
     <Compile Include="DataTypes\DownloadQueue.cs" />
     <Compile Include="Util\Download.cs" />
-    <Compile Include="Util\Md_5.cs" />
+    <Compile Include="Util\Md5.cs" />
     <Compile Include="Util\PathUtil.cs" />
     <Compile Include="Util\TagHandler.cs" />
     <Compile Include="Util\ImageHelper.cs" />
@@ -138,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\DownloadControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\NetworkControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

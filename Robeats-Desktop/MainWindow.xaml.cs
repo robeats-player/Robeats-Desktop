@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -36,7 +37,7 @@ namespace Robeats_Desktop
 {
     public partial class MainWindow : Window
     {
-        public static readonly string OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+        public static readonly string MusicDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
         public ObservableCollection<Song> Songs
         {
@@ -102,18 +103,19 @@ namespace Robeats_Desktop
         {
             await Task.Run(() =>
             {
-                var files = Directory.GetFiles(OutputDir, "*.mp3")
+                var files = Directory.GetFiles(MusicDir, "*.mp3")
                     .Select(Path.GetFileName).ToArray();
                 foreach (var file in files)
                 {
                     try
                     {
-                        var fullName = Path.Combine(OutputDir, file);
+                        var fullName = Path.Combine(MusicDir, file);
                         var tFile = TagLib.File.Create(fullName);
                         var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
                         var musicItem = new Song(title, tFile.Tag.FirstPerformer,
                             $"{(int)tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds:D2}",
-                            Md_5.Calculate(fullName));
+                             fullName);
+                        musicItem.Hash = BitConverter.ToString(Md5.Calculate(fullName));
                         Application.Current.Dispatcher.Invoke(delegate
                         {
                             Songs.Add(musicItem);
@@ -205,10 +207,24 @@ namespace Robeats_Desktop
             var discovery = new DeviceDiscovery();
             discovery.SendDiscoveryReply(new RobeatsDevice()
             {
-                Name = "YEET",
+
+                //TODO implement id's
+                Name = TextBoxDeviceName.Text,
                 Id = 240
             });
         }
 
+        private void ButtonSync_Click(object sender, RoutedEventArgs e)
+        {
+            List<byte[]> bytes = new List<byte[]>();
+            var songFiles = Directory.GetFiles(MusicDir, "*.mp3");
+            foreach (var songFile in songFiles)
+            {
+                bytes.Add(Md5.Calculate(songFile));
+            }
+            //var songSender = new SongSyncSender();
+            //var sync = new SongSyncListener();
+            //sync.Listen();
+        }
     }
 }

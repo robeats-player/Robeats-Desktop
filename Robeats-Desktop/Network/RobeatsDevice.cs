@@ -8,7 +8,7 @@ using Robeats_Desktop.Network.Frames;
 
 namespace Robeats_Desktop.Network
 {
-    class RobeatsDevice
+    public class RobeatsDevice
     {
         public byte Id { get; set; }
         public string Name { get; set; }

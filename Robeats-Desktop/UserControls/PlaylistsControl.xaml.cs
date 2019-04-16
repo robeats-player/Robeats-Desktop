@@ -47,27 +47,6 @@ namespace Robeats_Desktop.UserControls
             Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
             Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
             Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
             InitializeComponent();
             
         }

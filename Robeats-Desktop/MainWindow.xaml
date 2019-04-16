@@ -127,7 +127,7 @@
                                 <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Title}" />
                                 <GridViewColumn Header="Artist" Width="200" DisplayMemberBinding="{Binding Artist}" />
                                 <GridViewColumn Header="Duration" Width="80" DisplayMemberBinding="{Binding Duration}" />
-                                <GridViewColumn Header="Hash" Width="80" DisplayMemberBinding="{Binding Hash}" />
+                                <GridViewColumn Header="Hash" Width="200" DisplayMemberBinding="{Binding Hash}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -166,7 +166,7 @@
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
@@ -176,7 +176,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Content="Device Name:"/>
-                            <TextBox Grid.Column="1"  VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1" Name="TextBoxDeviceName" VerticalAlignment="Center" />
                             <Label Grid.Column="2" Content="Device ID:"/>
                             <TextBox Grid.Column="3" VerticalAlignment="Center" />
 
@@ -190,8 +190,10 @@
                                     Click="ButtonFindDevices_Click" />
                             <CheckBox Grid.Column="1" Name="ButtonSendInfo" Content="Visible to other devices"
                                     Click="ButtonSendInfo_Click" />
+                            
                         </Grid>
-                        
+                        <Button Grid.Row="2" Grid.Column="0" x:Name="ButtonSync" Content="Sync songs" Click="ButtonSync_Click"/>
+                        <local:NetworkControl Grid.Row="3"/>
                     </Grid>
                 </TabItem>
             </TabControl>

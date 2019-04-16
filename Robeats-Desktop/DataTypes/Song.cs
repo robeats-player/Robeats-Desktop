@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Windows.Controls;
+using TagLib.Riff;
 
 namespace Robeats_Desktop.DataTypes
 {
@@ -37,5 +39,10 @@ namespace Robeats_Desktop.DataTypes
             return
                 $"Title:{Title}, Artist:{Artist}, Duration:{Duration}, Hash:{Hash}, AbsolutePath:{AbsolutePath}, Album:{Album}";
         }
+
+        /*public static List<Song> GetSongs()
+        {
+
+        }*/
     }
 }

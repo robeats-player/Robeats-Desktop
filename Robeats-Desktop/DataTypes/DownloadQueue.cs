@@ -83,7 +83,7 @@ namespace Robeats_Desktop.DataTypes
             }
 
             Debug.WriteLine("Download complete!");
-            var songPath = Path.Combine(MainWindow.OutputDir, $"{PathUtil.Sanitize(video.Title)}.mp3");
+            var songPath = Path.Combine(MainWindow.MusicDir, $"{PathUtil.Sanitize(video.Title)}.mp3");
 
 
             //Convert the file from WebM (or whatever format is used) to mp3
