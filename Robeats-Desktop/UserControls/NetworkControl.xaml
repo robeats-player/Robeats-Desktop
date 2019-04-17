@@ -33,7 +33,7 @@
                     <materialDesign:PackIcon HorizontalContentAlignment="Center" HorizontalAlignment="Center"
                                              SnapsToDevicePixels="True" Height="60" Width="60" Kind="DownloadNetwork"
                                              Foreground="White" />
-                    <CheckBox Grid.Row="1"></CheckBox>
+                    <CheckBox Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top"></CheckBox>
                     <TextBlock Margin="0,10,0,0" Grid.Row="1" TextWrapping="Wrap" HorizontalAlignment="Center"
                                TextAlignment="Center" Foreground="{StaticResource PrimaryInverseTextBrush}"
                                Text="{Binding Path=Name}">
