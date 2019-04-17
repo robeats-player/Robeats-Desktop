@@ -84,11 +84,13 @@
     </ApplicationDefinition>
     <Compile Include="DataTypes\DownloadItem.cs" />
     <Compile Include="DataTypes\Playlist.cs" />
+    <Compile Include="Event\DeviceDiscoveryEventArgs.cs" />
     <Compile Include="Ffmpeg\Converter.cs" />
     <Compile Include="DataTypes\Song.cs" />
     <Compile Include="Network\DeviceDiscovery.cs" />
     <Compile Include="Network\Frames\StateProtocol.cs" />
     <Compile Include="Network\INetworkHelper.cs" />
+    <Compile Include="Network\Localhost.cs" />
     <Compile Include="Network\RobeatsDevice.cs" />
     <Compile Include="Network\SongSyncListener.cs" />
     <Compile Include="Network\SongSyncSender.cs" />

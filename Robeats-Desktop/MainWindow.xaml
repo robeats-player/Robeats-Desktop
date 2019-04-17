@@ -178,7 +178,7 @@
                             <Label Grid.Row="0" Grid.Column="0" Content="Device Name:"/>
                             <TextBox Grid.Column="1" Name="TextBoxDeviceName" VerticalAlignment="Center" />
                             <Label Grid.Column="2" Content="Device ID:"/>
-                            <TextBox Grid.Column="3" VerticalAlignment="Center" />
+                            <TextBox Name="TextBoxDeviceId" Grid.Column="3" VerticalAlignment="Center" />
 
                         </Grid>
                         <Grid Grid.Row="1">
@@ -193,7 +193,7 @@
                             
                         </Grid>
                         <Button Grid.Row="2" Grid.Column="0" x:Name="ButtonSync" Content="Sync songs" Click="ButtonSync_Click"/>
-                        <local:NetworkControl Grid.Row="3"/>
+                        <local:NetworkControl Grid.Row="3" x:Name="UserControlNetwork"/>
                     </Grid>
                 </TabItem>
             </TabControl>

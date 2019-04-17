@@ -30,9 +30,9 @@
                     </Grid.RowDefinitions>
                     <materialDesign:PackIcon HorizontalContentAlignment="Center" HorizontalAlignment="Center"
                                              SnapsToDevicePixels="True" Height="60" Width="60" Kind="LibraryMusic"
-                                             Foreground="White" />
+                                             Foreground="{DynamicResource PrimaryHueDarkBrush}" />
                     <TextBlock Margin="0,10,0,0" Grid.Row="1" TextWrapping="Wrap" HorizontalAlignment="Center"
-                               TextAlignment="Center" Foreground="{StaticResource PrimaryInverseTextBrush}"
+                               TextAlignment="Center" Foreground="{StaticResource PrimaryTextBrush}"
                                Text="{Binding Path=Name}" />
                 </Grid>
             </Border>

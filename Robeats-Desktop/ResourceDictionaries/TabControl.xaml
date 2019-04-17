@@ -19,7 +19,7 @@
                                 <SolidColorBrush Color="{DynamicResource PrimaryColor}" />
                             </TabPanel.Background>
                         </TabPanel>
-                        <Grid Grid.Column="1" Background="{DynamicResource PrimaryTextBrush}">
+                        <Grid Grid.Column="1" Background="{DynamicResource PrimaryHueDarkBrush}">
                             <ContentPresenter x:Name="PART_SelectedContentHost"
                                               Margin="4"
                                               ContentSource="SelectedContent"/>

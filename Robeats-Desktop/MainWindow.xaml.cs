@@ -22,6 +22,7 @@ using FFmpeg.NET;
 using FFmpeg.NET.Events;
 using Robeats_Desktop.Annotations;
 using Robeats_Desktop.DataTypes;
+using Robeats_Desktop.Event;
 using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Network;
 using Robeats_Desktop.Network.Frames;
@@ -39,9 +40,11 @@ namespace Robeats_Desktop
     {
         public static readonly string MusicDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
+        public Thread MulticastListener;
+
         public ObservableCollection<Song> Songs
         {
-            get => (ObservableCollection<Song>)GetValue(SongsProperty);
+            get => (ObservableCollection<Song>) GetValue(SongsProperty);
             set => SetValue(SongsProperty, value);
         }
 
@@ -54,6 +57,8 @@ namespace Robeats_Desktop
         {
             InitializeComponent();
             DataContext = this;
+            MulticastListener = new Thread(IoMethod);
+            MulticastListener.Start();
             Downloads = new ObservableCollection<DownloadItem>();
             Songs = new ObservableCollection<Song>();
         }
@@ -86,7 +91,6 @@ namespace Robeats_Desktop
             ProcessVideos();
         }
 
-        
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -113,14 +117,10 @@ namespace Robeats_Desktop
                         var tFile = TagLib.File.Create(fullName);
                         var title = tFile.Tag.Title ?? Path.GetFileNameWithoutExtension(file);
                         var musicItem = new Song(title, tFile.Tag.FirstPerformer,
-                            $"{(int)tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds:D2}",
-                             fullName);
+                            $"{(int) tFile.Properties.Duration.TotalMinutes}:{tFile.Properties.Duration.Seconds:D2}",
+                            fullName);
                         musicItem.Hash = BitConverter.ToString(Md5.Calculate(fullName));
-                        Application.Current.Dispatcher.Invoke(delegate
-                        {
-                            Songs.Add(musicItem);
-                        });
-
+                        Application.Current.Dispatcher.Invoke(delegate { Songs.Add(musicItem); });
                     }
                     catch (Exception)
                     {
@@ -128,7 +128,6 @@ namespace Robeats_Desktop
                         // Thrown when an item is being used by another program or still being converted.
                     }
                 }
-
             });
         }
 
@@ -160,14 +159,12 @@ namespace Robeats_Desktop
                     var downloadQueue = new DownloadQueue();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-
                         foreach (var resultVideo in playlistResult.Result.Videos)
                         {
                             var downloadItem = new DownloadItem(resultVideo);
                             Downloads.Add(downloadItem);
                             downloadQueue.Add(downloadItem);
                         }
-
                     });
                     Download.DownloadPlaylist(downloadQueue, 3);
                 });
@@ -180,37 +177,60 @@ namespace Robeats_Desktop
                     {
                         var downloadItem = new DownloadItem(videoResult.Result);
                         Downloads.Add(downloadItem);
-                        Download.DownloadSong(new DownloadQueue { downloadItem });
+                        Download.DownloadSong(new DownloadQueue {downloadItem});
                     });
                 });
             }
         }
-        private static void IoMethod()
+
+        private void IoMethod()
         {
             var discovery = new DeviceDiscovery();
-            discovery.SendRequest(ProtocolRequest.DeviceDiscovery);
-            var list = discovery.AwaitResponses(8000);
-            foreach (var robeatsDevice in list)
+            discovery.DeviceDetect += delegate(object sender, DeviceDiscoveryEventArgs args)
             {
-                Console.WriteLine($@"Request received from:{robeatsDevice.EndPoint}");
-            }
+                Console.WriteLine(args.RobeatsDevice.ToString());
+                discovery.SendDiscoveryReply(args.RobeatsDevice);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var device in UserControlNetwork.RobeatsDevices)
+                    {
+                        if (device.Id == args.RobeatsDevice.Id) return;
+                    }
+
+                    UserControlNetwork.RobeatsDevices.Add(args.RobeatsDevice);
+                    Debug.WriteLine($"Count:{UserControlNetwork.RobeatsDevices.Count}");
+                });
+            };
+            discovery.AwaitResponse();
         }
 
         private void ButtonFindDevices_Click(object sender, RoutedEventArgs e)
         {
             //IsProgressIndeterminate = true;
-            Task.Run(() => { IoMethod(); });
+            var name = TextBoxDeviceName.Text;
+            if (byte.TryParse(TextBoxDeviceId.Text, out var id))
+            {
+                Task.Run(() =>
+                {
+                    var discovery = new DeviceDiscovery();
+                    discovery.SendRequest(ProtocolRequest.DeviceDiscovery, new RobeatsDevice(name, id));
+                });
+            }
+            else
+            {
+                Debug.WriteLine("Not a valid id");
+                //TODO show error message
+            }
         }
 
         private void ButtonSendInfo_Click(object sender, RoutedEventArgs e)
         {
             var discovery = new DeviceDiscovery();
-            discovery.SendDiscoveryReply(new RobeatsDevice()
+            discovery.SendDiscoveryReply(new RobeatsDevice
             {
-
                 //TODO implement id's
                 Name = TextBoxDeviceName.Text,
-                Id = 240
+                Id = byte.Parse(TextBoxDeviceId.Text)
             });
         }
 
@@ -222,7 +242,17 @@ namespace Robeats_Desktop
             {
                 bytes.Add(Md5.Calculate(songFile));
             }
-            //var songSender = new SongSyncSender();
+
+            try
+            {
+                var songSender = new SongSyncSender(new IPEndPoint(IPAddress.Parse("192.168.1.8"), 4568));
+                songSender.Sync(bytes);
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine(exception);
+            }
+
             //var sync = new SongSyncListener();
             //sync.Listen();
         }

@@ -33,20 +33,12 @@ namespace Robeats_Desktop.UserControls
 
         // Using a DependencyProperty as the backing store for RobeatsDevices.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RobeatsDevicesProperty =
-            DependencyProperty.Register("RobeatsDevices", typeof(ObservableCollection<RobeatsDevice>), typeof(MainWindow));
+            DependencyProperty.Register("RobeatsDevices", typeof(ObservableCollection<RobeatsDevice>), typeof(NetworkControl));
 
 
         public NetworkControl()
         {
             RobeatsDevices = new ObservableCollection<RobeatsDevice>();
-            RobeatsDevices.Add(new RobeatsDevice()
-            {
-                EndPoint = new IPEndPoint(IPAddress.Parse("192.168.7"), 4567),
-                Name = "Test1",
-                StateProtocol = new StateProtocol(ProtocolRequest.DeviceDiscovery),
-                Id = 255,
-                Synced = false
-            });
             InitializeComponent();
         }
     }

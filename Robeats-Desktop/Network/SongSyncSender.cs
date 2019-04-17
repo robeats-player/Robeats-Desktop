@@ -16,13 +16,14 @@ namespace Robeats_Desktop.Network
         public SongSyncSender(IPEndPoint targetIp)
         {
             //Create a tcp listener on the local host on port 4568
-            Client = new TcpClient(targetIp);
+            Client = new TcpClient();
+            Client.Connect(targetIp);
         }
 
         /// <summary>
         /// Sync songs across devices
         /// </summary>
-        public void Sync(byte[][] songHashes)
+        public void Sync(List<byte[]> songHashes)
         {
             var stream = Client.GetStream();
             foreach (var songHash in songHashes)

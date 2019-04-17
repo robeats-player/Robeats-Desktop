@@ -15,12 +15,12 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!--  Colors -->
-            <Color x:Key="PrimaryColor">#2F2D2E</Color>
+            <Color x:Key="PrimaryColor">#424659</Color>
             <Color x:Key="PrimaryLightColor">#5E6262</Color>
-            <Color x:Key="PrimaryDarkColor">#0D1212</Color>
+            <Color x:Key="PrimaryDarkColor">#23242d</Color>
             <Color x:Key="AccentColor">#99C24D</Color>
-            <Color x:Key="TextColor">#000000</Color>
-            <Color x:Key="InverseTextColor">#FFFFFF</Color>
+            <Color x:Key="TextColor">White</Color>
+            <Color x:Key="InverseTextColor">DarkGray</Color>
 
             <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{DynamicResource PrimaryLightColor}" />
             <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="{DynamicResource InverseTextColor}" />

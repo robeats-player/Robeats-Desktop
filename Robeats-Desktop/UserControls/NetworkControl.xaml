@@ -24,7 +24,7 @@
         </Style>
 
         <DataTemplate x:Key="TileView" DataType="network:RobeatsDevice">
-            <Border BorderBrush="{StaticResource AccentTextBrush}" Width="100" Height="100">
+            <Border BorderBrush="{StaticResource AccentTextBrush}" Width="120" Height="120">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60" />

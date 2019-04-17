@@ -16,5 +16,14 @@ namespace Robeats_Desktop.Network
         public EndPoint EndPoint { get; set; }
         public bool IsBeingUpdated { get; set; }
         public StateProtocol StateProtocol { get; set; }
+
+        public RobeatsDevice() { }
+
+        public RobeatsDevice(string name, byte id)
+        {
+            Name = name;
+            Id = id;
+        }
+
     }
 }
