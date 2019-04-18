@@ -190,6 +190,9 @@ namespace Robeats_Desktop
             {
                 Console.WriteLine(args.RobeatsDevice.ToString());
                 discovery.SendDiscoveryReply(args.RobeatsDevice);
+            };
+            discovery.DeviceDiscoverReply += delegate(object sender, DeviceDiscoveryEventArgs args)
+            {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     foreach (var device in UserControlNetwork.RobeatsDevices)
@@ -201,7 +204,10 @@ namespace Robeats_Desktop
                     Debug.WriteLine($"Count:{UserControlNetwork.RobeatsDevices.Count}");
                 });
             };
-            discovery.AwaitResponse();
+
+            discovery.AwaitMulticastRequest();
+            Task.Run(() => { discovery.AwaitDiscoveryReply(); });
+            
         }
 
         private void ButtonFindDevices_Click(object sender, RoutedEventArgs e)
@@ -245,7 +251,7 @@ namespace Robeats_Desktop
 
             try
             {
-                var songSender = new SongSyncSender(new IPEndPoint(IPAddress.Parse("192.168.1.8"), 4568));
+                var songSender = new SongSyncSender(new IPEndPoint(IPAddress.Parse("192.168.1.8"), 4567));
                 songSender.Sync(bytes);
             }
             catch (Exception exception)

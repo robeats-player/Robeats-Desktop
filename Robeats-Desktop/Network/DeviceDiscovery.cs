@@ -15,13 +15,14 @@ namespace Robeats_Desktop.Network
     class DeviceDiscovery
     {
         public event EventHandler<DeviceDiscoveryEventArgs> DeviceDetect;
+        public event EventHandler<DeviceDiscoveryEventArgs> DeviceDiscoverReply;
 
         public IPEndPoint MulticastEndPoint { get; set; }
         public bool Visible { get; set; }
 
         //ipv4 = 224.5.6.7
         //ipv6 = FF02::5:6:7
-        public DeviceDiscovery() : this(new IPEndPoint(IPAddress.Parse("FF02::5:6:7"), 4567))
+        public DeviceDiscovery() : this(new IPEndPoint(IPAddress.Parse("224.5.6.7"), 4567))
         {
         }
 
@@ -46,30 +47,34 @@ namespace Robeats_Desktop.Network
             }
             else
             {
-                udpHelper = new UdpHelper((IPEndPoint)robeatsDevice.EndPoint);
+                var ipEndPoint = new IPEndPoint(((IPEndPoint)robeatsDevice.EndPoint).Address, 4568);
+                udpHelper = new UdpHelper(ipEndPoint);
             }
 
             var stateProtocol = new StateProtocol(requestType, robeatsDevice.Name, robeatsDevice.Id);
+            Debug.WriteLine("Sending request of type: "+requestType);
             udpHelper.Send(stateProtocol.ToBytes());
             udpHelper.Close();
         }
 
 
-        public void AwaitResponse()
+        public async void AwaitMulticastRequest()
         {
             try
             {
-                using (var client = new UdpClient(4567, AddressFamily.InterNetworkV6))
+                //Listen on port 4568 since its Unicast and cant be bound to port 4567 (in use for multicast)
+                using (var client = new UdpClient(MulticastEndPoint.Port, AddressFamily.InterNetwork))
                 {
                     client.Ttl = 2;
                     client.JoinMulticastGroup(MulticastEndPoint.Address);
                     client.Client.ReceiveBufferSize = 18;
-                    var ipEndPoint = new IPEndPoint(IPAddress.Any, MulticastEndPoint.Port);
+                    var ipEndPoint = new IPEndPoint(IPAddress.Loopback, MulticastEndPoint.Port);
                     while (true)
                     {
-                        var bytes = client.Receive(ref ipEndPoint);
+                        Debug.WriteLine("Awaiting multicast request");
+                        var result = await client.ReceiveAsync();
 
-                        var stateProtocol = StateProtocol.FromBytes(bytes);
+                        var stateProtocol = StateProtocol.FromBytes(result.Buffer);
 
                         //Check if reply is an actual discovery reply
                         if (stateProtocol.ProtocolType == ProtocolRequest.DeviceDiscovery)
@@ -80,7 +85,7 @@ namespace Robeats_Desktop.Network
                             {
                                 Id = stateProtocol.DeviceId,
                                 Name = stateProtocol.DeviceName,
-                                EndPoint = ipEndPoint,
+                                EndPoint = new IPEndPoint(ipEndPoint.Address,4568),
                                 StateProtocol = stateProtocol
 
                             };
@@ -108,9 +113,9 @@ namespace Robeats_Desktop.Network
                 var stateProtocolReply =
                     new StateProtocol(ProtocolRequest.DeviceDiscoveryReply, device.Name, device.Id);
                 var bytesReply = stateProtocolReply.ToBytes();
-                var clientReply = new UdpClient(AddressFamily.InterNetworkV6) {Ttl = 2};
-                clientReply.Connect((IPEndPoint) device.EndPoint);
-                clientReply.Send(bytesReply, bytesReply.Length);
+                var clientReply = new UdpClient(AddressFamily.InterNetwork) {Ttl = 2};
+                Debug.WriteLine($"Sending DR: {device.EndPoint}");
+                clientReply.Send(bytesReply, bytesReply.Length, (IPEndPoint)device.EndPoint);
                 clientReply.Close();
             }
             else
@@ -119,9 +124,51 @@ namespace Robeats_Desktop.Network
             }
         }
 
+
+        public async void AwaitDiscoveryReply()
+        {
+            try
+            {
+                using (var client = new UdpClient(4568, AddressFamily.InterNetwork))
+                {
+                    while (true)
+                    {
+                        Debug.WriteLine("Awaiting DR");
+
+                        var result = await client.ReceiveAsync();
+                        Debug.WriteLine("Received DR");
+                        var stateProtocol = StateProtocol.FromBytes(result.Buffer);
+
+                        if (stateProtocol.ProtocolType == ProtocolRequest.DeviceDiscoveryReply)
+                        {
+                            var robeatsDevice = new RobeatsDevice
+                            {
+                                Id = stateProtocol.DeviceId,
+                                Name = stateProtocol.DeviceName,
+                                /*EndPoint = client.Client.RemoteEndPoint,*/
+                                StateProtocol = stateProtocol
+
+                            };
+                            OnDiscoveryReply(new DeviceDiscoveryEventArgs { RobeatsDevice = robeatsDevice });
+                        }
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
         protected virtual void OnDeviceDetect(DeviceDiscoveryEventArgs args)
         {
             DeviceDetect?.Invoke(this, args);
+        }
+
+        protected virtual void OnDiscoveryReply(DeviceDiscoveryEventArgs args)
+        {
+            DeviceDiscoverReply?.Invoke(this, args);
         }
     }
 }
