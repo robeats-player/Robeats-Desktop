@@ -18,7 +18,7 @@ namespace Robeats_Desktop.Network
         {
 
         }
-        public UdpHelper([NotNull] IPEndPoint ipEndPoint) : base(AddressFamily.InterNetworkV6)
+        public UdpHelper([NotNull] IPEndPoint ipEndPoint) : base(AddressFamily.InterNetwork)
         {
             IpEndPoint = ipEndPoint;
             Connect(IpEndPoint);
