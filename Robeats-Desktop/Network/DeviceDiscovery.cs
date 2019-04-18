@@ -19,8 +19,9 @@ namespace Robeats_Desktop.Network
         public IPEndPoint MulticastEndPoint { get; set; }
         public bool Visible { get; set; }
 
-
-        public DeviceDiscovery() : this(new IPEndPoint(IPAddress.Parse("224.5.6.7"), 4567))
+        //ipv4 = 224.5.6.7
+        //ipv6 = FF02::5:6:7
+        public DeviceDiscovery() : this(new IPEndPoint(IPAddress.Parse("FF02::5:6:7"), 4567))
         {
         }
 
@@ -58,7 +59,7 @@ namespace Robeats_Desktop.Network
         {
             try
             {
-                using (var client = new UdpClient(4567, AddressFamily.InterNetwork))
+                using (var client = new UdpClient(4567, AddressFamily.InterNetworkV6))
                 {
                     client.Ttl = 2;
                     client.JoinMulticastGroup(MulticastEndPoint.Address);
@@ -107,7 +108,7 @@ namespace Robeats_Desktop.Network
                 var stateProtocolReply =
                     new StateProtocol(ProtocolRequest.DeviceDiscoveryReply, device.Name, device.Id);
                 var bytesReply = stateProtocolReply.ToBytes();
-                var clientReply = new UdpClient {Ttl = 2};
+                var clientReply = new UdpClient(AddressFamily.InterNetworkV6) {Ttl = 2};
                 clientReply.Connect((IPEndPoint) device.EndPoint);
                 clientReply.Send(bytesReply, bytesReply.Length);
                 clientReply.Close();
