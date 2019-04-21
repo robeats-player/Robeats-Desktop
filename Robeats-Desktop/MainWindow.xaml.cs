@@ -220,6 +220,7 @@ namespace Robeats_Desktop
                 {
                     var discovery = new DeviceDiscovery();
                     discovery.SendRequest(ProtocolRequest.DeviceDiscovery, new RobeatsDevice(name, id));
+                    discovery.AwaitDiscoveryReply();
                 });
             }
             else

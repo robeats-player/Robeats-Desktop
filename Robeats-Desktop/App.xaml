@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="ResourceDictionaries/TabControl.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/ListView.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/ScrollView.xaml" />
+                <ResourceDictionary Source="ResourceDictionaries/Tile.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!--  Colors -->

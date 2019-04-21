@@ -79,8 +79,8 @@ namespace Robeats_Desktop.Network
                         //Check if reply is an actual discovery reply
                         if (stateProtocol.ProtocolType == ProtocolRequest.DeviceDiscovery)
                         {
-                            //TODO ignore own requests
-                            if (Equals(ipEndPoint.Address, Localhost.GetIpAddress(Dns.GetHostName()))) return;
+                            if (ipEndPoint.Address.Equals(IPAddress.Parse("127.0.0.1"))) return;
+                            
                             var robeatsDevice = new RobeatsDevice
                             {
                                 Id = stateProtocol.DeviceId,

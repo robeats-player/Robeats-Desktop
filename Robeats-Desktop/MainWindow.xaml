@@ -144,7 +144,10 @@
                             <TextBlock Grid.Column="1">Playlists</TextBlock>
                         </Grid>
                     </TabItem.Header>
-                    <local:PlaylistsControl />
+                    <local:PlaylistsControl x:Name="PlaylistsControl">
+                        <local:Tile></local:Tile>
+                        
+                    </local:PlaylistsControl>
                 </TabItem>
                 <!--Network Devices-->
                 <TabItem Name="TabItemNetwork">
@@ -163,9 +166,9 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
@@ -175,9 +178,9 @@
                                 <ColumnDefinition Width="70"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Row="0" Grid.Column="0" Content="Device Name:"/>
+                            <Label VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Content="Device Name:"/>
                             <TextBox Grid.Column="1" Name="TextBoxDeviceName" VerticalAlignment="Center" />
-                            <Label Grid.Column="2" Content="Device ID:"/>
+                            <Label VerticalAlignment="Center" Grid.Column="2" Content="Device ID:"/>
                             <TextBox Name="TextBoxDeviceId" Grid.Column="3" VerticalAlignment="Center" />
 
                         </Grid>
@@ -186,13 +189,13 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Name="ButtonFindDevices" Content="Find devices"
+                            <Button Margin="3" Grid.Column="0" Name="ButtonFindDevices" Content="Find devices"
                                     Click="ButtonFindDevices_Click" />
                             <CheckBox Grid.Column="1" Name="ButtonSendInfo" Content="Visible to other devices"
                                     Click="ButtonSendInfo_Click" />
                             
                         </Grid>
-                        <Button Grid.Row="2" Grid.Column="0" x:Name="ButtonSync" Content="Sync songs" Click="ButtonSync_Click"/>
+                        <Button Margin="3" Grid.Row="2" Grid.Column="0" x:Name="ButtonSync" Content="Sync songs" Click="ButtonSync_Click"/>
                         <local:NetworkControl Grid.Row="3" x:Name="UserControlNetwork"/>
                     </Grid>
                 </TabItem>

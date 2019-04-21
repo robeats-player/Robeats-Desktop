@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MaterialDesignThemes.Wpf;
 using Robeats_Desktop.DataTypes;
 
 namespace Robeats_Desktop.UserControls
@@ -39,14 +40,8 @@ namespace Robeats_Desktop.UserControls
         {
             Playlists = new ObservableCollection<Playlist>();
             var songs = new HashSet<Song> { new Song("Yeet", "no U", "5:32", "-") };
-            Playlists.Add(new Playlist { Name = "Hardcore Bass", Songs = songs });
-            Playlists.Add(new Playlist { Name = "EDM", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
-            Playlists.Add(new Playlist { Name = "This is a long title", Songs = songs });
+            Playlists.Add(new Playlist());
+            
             InitializeComponent();
             
         }
