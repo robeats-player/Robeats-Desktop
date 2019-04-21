@@ -1,7 +1,7 @@
 language: csharp
-solution: Robeats-DesktopTests.sln
+solution: Robeats-Desktop.sln
 install:
-  - nuget restore Robeats-DesktopTests.sln
+  - nuget restore Robeats-Desktop.sln
   - nuget install NUnit.Console -Version 3.9.0 -OutputDirectory testrunner
 script:
   - msbuild /p:Configuration=Release Robeats-DesktopTests.sln
