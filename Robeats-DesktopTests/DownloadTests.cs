@@ -42,7 +42,8 @@ namespace Robeats_DesktopTests
             var tempFileName = Path.GetTempFileName();
             using (var fileStream = File.Create(tempFileName, 1024))
             {
-                client.DownloadMediaStreamAsync(audioStream, fileStream).Wait();
+                var result = client.DownloadMediaStreamAsync(audioStream, fileStream);
+                Assert.IsNotNull(result);
             }
         }
 
