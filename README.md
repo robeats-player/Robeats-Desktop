@@ -1,6 +1,6 @@
 # Robeats-Desktop
 
-[![Build Status](https://travis-ci.com/robeats-player/Robeats-Desktop.svg?branch=master)](https://travis-ci.com/robeats-player/Robeats-Desktop)
+[![AppVeyor](https://img.shields.io/appveyor/ci/darkeyedragon/robeats-desktop.svg)](https://travis-ci.com/robeats-player/Robeats-Desktop)
 [![AppVeyor tests](https://img.shields.io/appveyor/tests/darkeyedragon/Robeats-Desktop.svg)](https://ci.appveyor.com/project/DarkEyeDragon/robeats-desktop/build/tests)
 
 Download youtube video's and convert them to mp3 with ease. For free.
