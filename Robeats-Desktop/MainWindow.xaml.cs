@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -38,6 +39,10 @@ namespace Robeats_Desktop
 {
     public partial class MainWindow : Window
     {
+
+        private bool mediaPlayerIsPlaying = false;
+        private bool userIsDraggingSlider = false;
+
         public static readonly string MusicDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
         public Thread MulticastListener;
@@ -61,8 +66,20 @@ namespace Robeats_Desktop
             MulticastListener.Start();
             Downloads = new ObservableCollection<DownloadItem>();
             Songs = new ObservableCollection<Song>();
-        }
 
+            var timer = new DispatcherTimer(DispatcherPriority.Render) {Interval = TimeSpan.FromSeconds(1)};
+            timer.Tick += timer_Tick;
+            timer.Start();
+        }
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if ((mePlayer.Source != null) && (mePlayer.NaturalDuration.HasTimeSpan) && (!userIsDraggingSlider))
+            {
+                sliProgress.Minimum = 0;
+                sliProgress.Maximum = mePlayer.NaturalDuration.TimeSpan.TotalSeconds;
+                sliProgress.Value = mePlayer.Position.TotalSeconds;
+            }
+        }
         public ObservableCollection<DownloadItem> Downloads
         {
             get => (ObservableCollection<DownloadItem>) GetValue(DownloadsProperty);
@@ -263,5 +280,59 @@ namespace Robeats_Desktop
             //var sync = new SongSyncListener();
             //sync.Listen();
         }
+
+        private void Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (mePlayer != null) && (mePlayer.Source != null);
+        }
+
+        private void Play_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            mePlayer.Play();
+            mediaPlayerIsPlaying = true;
+        }
+
+        private void Pause_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = mediaPlayerIsPlaying;
+        }
+
+        private void Pause_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            mePlayer.Pause();
+        }
+
+        private void Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = mediaPlayerIsPlaying;
+        }
+
+        private void Stop_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            mePlayer.Stop();
+            mediaPlayerIsPlaying = false;
+        }
+
+        private void sliProgress_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            userIsDraggingSlider = true;
+        }
+
+        private void sliProgress_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            userIsDraggingSlider = false;
+            mePlayer.Position = TimeSpan.FromSeconds(sliProgress.Value);
+        }
+
+        private void sliProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            lblProgressStatus.Text = TimeSpan.FromSeconds(sliProgress.Value).ToString(@"hh\:mm\:ss");
+        }
+
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            mePlayer.Volume += (e.Delta > 0) ? 0.1 : -0.1;
+        }
+
     }
 }

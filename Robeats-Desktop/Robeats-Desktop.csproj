@@ -106,6 +106,7 @@
     <Compile Include="Network\UdpHelper.cs" />
     <Compile Include="Parsers\CoverParser.cs" />
     <Compile Include="Parsers\SongDetailParser.cs" />
+    <Compile Include="Player\AudioPlayer.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="UserControls\DownloadControl.xaml.cs">
       <DependentUpon>DownloadControl.xaml</DependentUpon>
