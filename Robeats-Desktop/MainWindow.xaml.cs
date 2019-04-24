@@ -19,6 +19,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Windows.Media;
+using Windows.Media.Core;
+using Windows.Media.Playback;
+using Windows.UI.Xaml.Media;
 using FFmpeg.NET;
 using FFmpeg.NET.Events;
 using Robeats_Desktop.Annotations;
@@ -32,6 +36,7 @@ using Robeats_Desktop.Util;
 using YoutubeExplode;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
+using MediaPlayer = Windows.Media.Playback.MediaPlayer;
 using Path = System.IO.Path;
 using Playlist = YoutubeExplode.Models.Playlist;
 
@@ -39,6 +44,7 @@ namespace Robeats_Desktop
 {
     public partial class MainWindow : Window
     {
+        private readonly MediaPlayer MediaPlayer;
 
         private bool mediaPlayerIsPlaying = false;
         private bool userIsDraggingSlider = false;
@@ -67,20 +73,52 @@ namespace Robeats_Desktop
             Downloads = new ObservableCollection<DownloadItem>();
             Songs = new ObservableCollection<Song>();
 
-            mePlayer.Source = new Uri(@"C:\Users\Joshua\Music\GTA - Red Lips (Aero Chord Remix).mp3");
             var timer = new DispatcherTimer(DispatcherPriority.Render) {Interval = TimeSpan.FromSeconds(1)};
             timer.Tick += timer_Tick;
             timer.Start();
+
+            MediaPlayer = new MediaPlayer();
+            MediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
+            var systemControls =
+                MediaPlayer.SystemMediaTransportControls;
+
+            systemControls.ButtonPressed += SystemControls_ButtonPressed;
+            systemControls.IsPlayEnabled = true;
+            systemControls.IsPauseEnabled = true;
         }
+
+        void SystemControls_ButtonPressed(SystemMediaTransportControls sender,
+            SystemMediaTransportControlsButtonPressedEventArgs args)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                switch (args.Button)
+                {
+                    case SystemMediaTransportControlsButton.Play:
+                        MediaPlayer.Play();
+                        break;
+                    case SystemMediaTransportControlsButton.Pause:
+                        MediaPlayer.Pause();
+                        break;
+                    case SystemMediaTransportControlsButton.Stop:
+                        MediaPlayer.Pause();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
         private void timer_Tick(object sender, EventArgs e)
         {
-            if ((mePlayer.Source != null) && (mePlayer.NaturalDuration.HasTimeSpan) && (!userIsDraggingSlider))
+            if ((MediaPlayer.Source != null) && (!userIsDraggingSlider))
             {
-                sliProgress.Minimum = 0;
-                sliProgress.Maximum = mePlayer.NaturalDuration.TimeSpan.TotalSeconds;
-                sliProgress.Value = mePlayer.Position.TotalSeconds;
+                SliderProgress.Minimum = 0;
+                SliderProgress.Maximum = MediaPlayer.NaturalDuration.TotalSeconds;
+                SliderProgress.Value = MediaPlayer.Position.TotalSeconds;
             }
         }
+
         public ObservableCollection<DownloadItem> Downloads
         {
             get => (ObservableCollection<DownloadItem>) GetValue(DownloadsProperty);
@@ -225,7 +263,6 @@ namespace Robeats_Desktop
 
             discovery.AwaitMulticastRequest();
             Task.Run(() => { discovery.AwaitDiscoveryReply(); });
-            
         }
 
         private void ButtonFindDevices_Click(object sender, RoutedEventArgs e)
@@ -284,13 +321,28 @@ namespace Robeats_Desktop
 
         private void Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (mePlayer != null) && (mePlayer.Source != null);
+            e.CanExecute = (MediaPlayer != null) && (MediaPlayer.Source != null);
         }
 
         private void Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            mePlayer.Play();
-            mediaPlayerIsPlaying = true;
+            if (((ListViewItem) sender).Content is Song song)
+            {
+                MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(song.AbsolutePath));
+                mediaPlayerIsPlaying = true;
+                //LabelProgressTotalDuration.Content = MusicPlayer.NaturalDuration.TimeSpan.ToString(@"m\:ss");
+                var updater = MediaPlayer.SystemMediaTransportControls.DisplayUpdater;
+                updater.Type = MediaPlaybackType.Music;
+                if(song.Artist != null)
+                    updater.MusicProperties.Artist = song.Artist;
+                if (song.Album != null)
+                    updater.MusicProperties.AlbumTitle = song.Album;
+                if (song.Title != null)
+                    updater.MusicProperties.Title = song.Title;
+                
+                updater.Update();
+                MediaPlayer.Play();
+            }
         }
 
         private void Pause_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -300,7 +352,7 @@ namespace Robeats_Desktop
 
         private void Pause_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            mePlayer.Pause();
+            MediaPlayer.Pause();
         }
 
         private void Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -310,7 +362,7 @@ namespace Robeats_Desktop
 
         private void Stop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            mePlayer.Stop();
+            MediaPlayer.Dispose();
             mediaPlayerIsPlaying = false;
         }
 
@@ -322,18 +374,27 @@ namespace Robeats_Desktop
         private void sliProgress_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             userIsDraggingSlider = false;
-            mePlayer.Position = TimeSpan.FromSeconds(sliProgress.Value);
+            MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(SliderProgress.Value);
         }
 
         private void sliProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            lblProgressStatus.Text = TimeSpan.FromSeconds(sliProgress.Value).ToString(@"hh\:mm\:ss");
+            LabelProgress.Text = TimeSpan.FromSeconds(SliderProgress.Value).ToString(@"m\:ss");
         }
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            mePlayer.Volume += (e.Delta > 0) ? 0.1 : -0.1;
+            MediaPlayer.Volume += (e.Delta > 0) ? 0.1 : -0.1;
         }
 
+        private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListViewItem item && item.IsSelected)
+            {
+                Play_Executed(sender, null);
+            }
+
+            Debug.WriteLine("Clicked!");
+        }
     }
 }

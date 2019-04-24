@@ -58,7 +58,6 @@
                     </Button>
 
                 </ToolBar>
-                <MediaElement Grid.Row="0" Grid.Column="1" Name="mePlayer" LoadedBehavior="Manual" Stretch="None" Margin="0,10" />
                 <StatusBar Grid.Column="1" Grid.Row="0">
                     <StatusBar.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -67,18 +66,22 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                             </Grid>
                         </ItemsPanelTemplate>
                     </StatusBar.ItemsPanel>
                     <StatusBarItem>
-                        <TextBlock Name="lblProgressStatus">00:00:00</TextBlock>
+                        <TextBlock Name="LabelProgress">0:00</TextBlock>
                     </StatusBarItem>
                     <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
-                        <Slider Name="sliProgress" Thumb.DragStarted="sliProgress_DragStarted"  Thumb.DragCompleted="sliProgress_DragCompleted" ValueChanged="sliProgress_ValueChanged" />
+                        <Slider Name="SliderProgress" Thumb.DragStarted="sliProgress_DragStarted"  Thumb.DragCompleted="sliProgress_DragCompleted" ValueChanged="sliProgress_ValueChanged" />
+                    </StatusBarItem>
+                    <StatusBarItem Grid.Column="3">
+                        <ProgressBar Name="ProgressBarVolume" Width="50" Height="12" Maximum="1" Value="{Binding ElementName=MusicPlayer, Path=Volume}" />
                     </StatusBarItem>
                     <StatusBarItem Grid.Column="2">
-                        <ProgressBar Name="pbVolume" Width="50" Height="12" Maximum="1" Value="{Binding ElementName=mePlayer, Path=Volume}" />
+                        <!--<Label Name="LabelProgressTotalDuration" Content="0:00" />-->
                     </StatusBarItem>
                 </StatusBar>
 
@@ -196,7 +199,11 @@
                                 <GridViewColumn Header="Hash" Width="200" DisplayMemberBinding="{Binding Hash}" />
                             </GridView>
                         </ListView.View>
-                        
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </TabItem>
                 <!--Playlists-->

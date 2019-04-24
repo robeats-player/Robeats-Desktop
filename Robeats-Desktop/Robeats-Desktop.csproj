@@ -77,6 +77,9 @@
     <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
       <HintPath>..\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="Windows">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.17763.0\Windows.winmd</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -107,6 +110,7 @@
     <Compile Include="Parsers\CoverParser.cs" />
     <Compile Include="Parsers\SongDetailParser.cs" />
     <Compile Include="Player\AudioPlayer.cs" />
+    <Compile Include="Player\UniversalPlayer.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="UserControls\DownloadControl.xaml.cs">
       <DependentUpon>DownloadControl.xaml</DependentUpon>

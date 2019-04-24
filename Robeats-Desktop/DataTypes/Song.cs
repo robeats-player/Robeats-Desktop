@@ -12,6 +12,8 @@ namespace Robeats_Desktop.DataTypes
         public string Hash { get; set; }
         public string AbsolutePath { get; set; }
         public string Album { get; set; }
+
+
         public Song()
         {
         }
