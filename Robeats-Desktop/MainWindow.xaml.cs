@@ -67,6 +67,7 @@ namespace Robeats_Desktop
             Downloads = new ObservableCollection<DownloadItem>();
             Songs = new ObservableCollection<Song>();
 
+            mePlayer.Source = new Uri(@"C:\Users\Joshua\Music\GTA - Red Lips (Aero Chord Remix).mp3");
             var timer = new DispatcherTimer(DispatcherPriority.Render) {Interval = TimeSpan.FromSeconds(1)};
             timer.Tick += timer_Tick;
             timer.Start();
