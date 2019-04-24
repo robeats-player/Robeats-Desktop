@@ -203,7 +203,7 @@
                     </TabItem.Header>
                     <local:PlaylistsControl x:Name="PlaylistsControl">
                         <local:Tile></local:Tile>
-
+                        
                     </local:PlaylistsControl>
                 </TabItem>
                 <!--Network Devices-->
