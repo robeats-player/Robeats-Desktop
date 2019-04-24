@@ -19,6 +19,7 @@
         <CommandBinding Command="MediaCommands.Pause" CanExecute="Pause_CanExecute" Executed="Pause_Executed" />
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed" />
     </Window.CommandBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -180,13 +181,22 @@
                               ItemsSource="{Binding Songs, RelativeSource={RelativeSource AncestorType=robeatsDesktop:MainWindow}}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="40" />
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border>
+                                                <materialDesign:PackIcon Kind="PlayCircleOutline" Width="20" Height="20"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Title}" />
                                 <GridViewColumn Header="Artist" Width="200" DisplayMemberBinding="{Binding Artist}" />
                                 <GridViewColumn Header="Duration" Width="80" DisplayMemberBinding="{Binding Duration}" />
                                 <GridViewColumn Header="Hash" Width="200" DisplayMemberBinding="{Binding Hash}" />
                             </GridView>
                         </ListView.View>
+                        
                     </ListView>
                 </TabItem>
                 <!--Playlists-->
