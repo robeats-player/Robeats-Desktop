@@ -24,7 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="60" />
+            <RowDefinition Height="80" />
         </Grid.RowDefinitions>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
@@ -36,7 +36,7 @@
         <DockPanel Grid.Row="2">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60" />
+                    <RowDefinition Height="80" />
                     <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -44,19 +44,18 @@
                     <ColumnDefinition Width="6*"/>
                 </Grid.ColumnDefinitions>
                 <ToolBar Grid.Column="0" HorizontalContentAlignment="Center">
-                    <Button Command="MediaCommands.Pause">
+                    <Button Command="MediaCommands.PreviousTrack" >
                         <materialDesign:PackIcon  Kind="SkipPrevious"/>
                     </Button>
-                    <Button Command="MediaCommands.Play">
-                        <materialDesign:PackIcon  Kind="PlayCircleOutline"/>
+                    <Button Command="MediaCommands.TogglePlayPause" Name="ButtonPlay">
+                        <materialDesign:PackIcon  Kind="PlayCircleOutline" Name="PackIconPlay"/>
                     </Button>
                     <!--<Button Command="MediaCommands.Pause">
                         <materialDesign:PackIcon  Kind="PauseCircleOutline"/>
                     </Button>-->
-                    <Button Command="MediaCommands.Pause">
+                    <Button Command="MediaCommands.NextTrack">
                         <materialDesign:PackIcon  Kind="SkipNext"/>
                     </Button>
-
                 </ToolBar>
                 <StatusBar Grid.Column="1" Grid.Row="0">
                     <StatusBar.ItemsPanel>
@@ -64,8 +63,8 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                             </Grid>
@@ -84,7 +83,6 @@
                         <!--<Label Name="LabelProgressTotalDuration" Content="0:00" />-->
                     </StatusBarItem>
                 </StatusBar>
-
             </Grid>
         </DockPanel>
         <DockPanel Grid.Row="1">
@@ -220,7 +218,7 @@
                     </TabItem.Header>
                     <local:PlaylistsControl x:Name="PlaylistsControl">
                         <local:Tile></local:Tile>
-                        
+
                     </local:PlaylistsControl>
                 </TabItem>
                 <!--Network Devices-->

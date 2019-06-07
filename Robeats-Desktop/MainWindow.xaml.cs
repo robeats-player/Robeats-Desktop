@@ -22,15 +22,19 @@ using System.Windows.Threading;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media;
 using FFmpeg.NET;
 using FFmpeg.NET.Events;
+using MaterialDesignThemes.Wpf;
 using Robeats_Desktop.Annotations;
 using Robeats_Desktop.DataTypes;
 using Robeats_Desktop.Event;
 using Robeats_Desktop.Ffmpeg;
 using Robeats_Desktop.Network;
 using Robeats_Desktop.Network.Frames;
+using Robeats_Desktop.Player;
 using Robeats_Desktop.UserControls;
 using Robeats_Desktop.Util;
 using YoutubeExplode;
@@ -44,7 +48,7 @@ namespace Robeats_Desktop
 {
     public partial class MainWindow : Window
     {
-        private readonly MediaPlayer MediaPlayer;
+        private readonly AudioPlayer audioPlayer;
 
         private bool mediaPlayerIsPlaying = false;
         private bool userIsDraggingSlider = false;
@@ -77,14 +81,16 @@ namespace Robeats_Desktop
             timer.Tick += timer_Tick;
             timer.Start();
 
-            MediaPlayer = new MediaPlayer();
-            MediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
+            audioPlayer = new AudioPlayer(SliderProgress, LabelProgress);
+            audioPlayer.MediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
             var systemControls =
-                MediaPlayer.SystemMediaTransportControls;
+                audioPlayer.MediaPlayer.SystemMediaTransportControls;
 
             systemControls.ButtonPressed += SystemControls_ButtonPressed;
             systemControls.IsPlayEnabled = true;
             systemControls.IsPauseEnabled = true;
+            systemControls.IsNextEnabled = true;
+            systemControls.IsPreviousEnabled = true;
         }
 
         void SystemControls_ButtonPressed(SystemMediaTransportControls sender,
@@ -95,13 +101,13 @@ namespace Robeats_Desktop
                 switch (args.Button)
                 {
                     case SystemMediaTransportControlsButton.Play:
-                        MediaPlayer.Play();
+                        audioPlayer.Play();
                         break;
                     case SystemMediaTransportControlsButton.Pause:
-                        MediaPlayer.Pause();
+                        audioPlayer.Pause();
                         break;
                     case SystemMediaTransportControlsButton.Stop:
-                        MediaPlayer.Pause();
+                        audioPlayer.Pause();
                         break;
                     default:
                         break;
@@ -111,11 +117,11 @@ namespace Robeats_Desktop
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            if ((MediaPlayer.Source != null) && (!userIsDraggingSlider))
+            if ((audioPlayer.MediaPlayer.Source != null) && (!userIsDraggingSlider))
             {
                 SliderProgress.Minimum = 0;
-                SliderProgress.Maximum = MediaPlayer.NaturalDuration.TotalSeconds;
-                SliderProgress.Value = MediaPlayer.Position.TotalSeconds;
+                SliderProgress.Maximum = audioPlayer.MediaPlayer.PlaybackSession.NaturalDuration.TotalSeconds;
+                SliderProgress.Value = audioPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
             }
         }
 
@@ -321,27 +327,19 @@ namespace Robeats_Desktop
 
         private void Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (MediaPlayer != null) && (MediaPlayer.Source != null);
+            e.CanExecute = (audioPlayer != null) && (audioPlayer.MediaPlayer.Source != null);
         }
 
         private void Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (((ListViewItem) sender).Content is Song song)
             {
-                MediaPlayer.Source = MediaSource.CreateFromUri(new Uri(song.AbsolutePath));
-                mediaPlayerIsPlaying = true;
+                audioPlayer.Play(song);
                 //LabelProgressTotalDuration.Content = MusicPlayer.NaturalDuration.TimeSpan.ToString(@"m\:ss");
-                var updater = MediaPlayer.SystemMediaTransportControls.DisplayUpdater;
-                updater.Type = MediaPlaybackType.Music;
-                if(song.Artist != null)
-                    updater.MusicProperties.Artist = song.Artist;
-                if (song.Album != null)
-                    updater.MusicProperties.AlbumTitle = song.Album;
-                if (song.Title != null)
-                    updater.MusicProperties.Title = song.Title;
-                
-                updater.Update();
-                MediaPlayer.Play();
+                audioPlayer.SetSongInfo(song);
+                audioPlayer.SetThumb(song);
+                audioPlayer.Play();
+                PackIconPlay.Kind = PackIconKind.PauseCircleFilled;
             }
         }
 
@@ -352,7 +350,7 @@ namespace Robeats_Desktop
 
         private void Pause_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            MediaPlayer.Pause();
+            audioPlayer.Pause();
         }
 
         private void Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -362,7 +360,7 @@ namespace Robeats_Desktop
 
         private void Stop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            MediaPlayer.Dispose();
+            audioPlayer.MediaPlayer.Dispose();
             mediaPlayerIsPlaying = false;
         }
 
@@ -374,7 +372,7 @@ namespace Robeats_Desktop
         private void sliProgress_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             userIsDraggingSlider = false;
-            MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(SliderProgress.Value);
+            audioPlayer.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(SliderProgress.Value);
         }
 
         private void sliProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -384,12 +382,14 @@ namespace Robeats_Desktop
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            MediaPlayer.Volume += (e.Delta > 0) ? 0.1 : -0.1;
+            audioPlayer.MediaPlayer.Volume += (e.Delta > 0) ? 0.1 : -0.1;
         }
 
         private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is ListViewItem item && item.IsSelected)
+
+
+            if (sender is ListViewItem)
             {
                 Play_Executed(sender, null);
             }
