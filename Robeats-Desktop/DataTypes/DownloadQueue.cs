@@ -111,10 +111,17 @@ namespace Robeats_Desktop.DataTypes
 
             //Set the cover
             var coverParser = new CoverParser(song.Title, song.Artist);
-            var bitmapCover = await coverParser.GetAsync();
-            if (bitmapCover != null)
+            try
             {
-                tagHandler.SetCover(bitmapCover);
+                var bitmapCover = await coverParser.GetAsync();
+                if (bitmapCover != null)
+                {
+                    tagHandler.SetCover(bitmapCover);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
             Debug.WriteLine("Conversion complete!");
         }
